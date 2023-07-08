@@ -6,16 +6,7 @@
         <div class="bd-title-left">
           <p class="m-0 font-600">举报群聊</p>
         </div>
-        <div class="flex items-center h-50px">
-          <el-form inline>
-            <el-form-item class="mb-0 !mr-16px">
-              <el-input v-model="queryFrom.keyword" placeholder="uid/手机号/用户名" clearable />
-            </el-form-item>
-            <el-form-item class="mb-0 !mr-0">
-              <el-button type="primary" @click="getUserList">查询</el-button>
-            </el-form-item>
-          </el-form>
-        </div>
+        <div class="flex items-center h-50px"></div>
       </div>
       <div class="flex-1 overflow-hidden p-12px">
         <el-table v-loading="loadTable" :data="tableData" :border="true" style="width: 100%; height: 100%">
@@ -63,86 +54,70 @@ meta:
 </route>
 
 <script lang="tsx" setup>
-import { ElButton, ElSpace, ElAvatar } from 'element-plus';
+import { ElAvatar } from 'element-plus';
 import { BU_DOU_CONFIG } from '@/config';
 // API 接口
-import { userListGet } from '@/api/user';
+import { reportListGet } from '@/api/report';
 /**
  * 表格
  */
-const column = reactive([
+const column = reactive<Column.ColumnOptions[]>([
   {
     prop: 'name',
-    label: '用户名',
-    fixed: 'left',
+    label: '举报者名称',
     width: 140
   },
   {
-    prop: 'phone',
-    label: '手机号',
-    fixed: 'left',
+    prop: 'uid',
+    label: '举报者ID',
     width: 120
   },
   {
-    prop: 'avatar',
-    label: '头像',
+    prop: 'channel_name',
+    label: '被举报群名称',
+    width: 200
+  },
+  {
+    prop: 'channel_avatar',
+    label: '被举报群头像',
     align: 'center',
-    width: 80,
+    width: 130,
     render: (scope: any) => {
       let img_url = '';
-      if (scope.row['uid']) {
-        img_url = `${BU_DOU_CONFIG.APP_URL}users/${scope.row['uid']}/avatar`;
+      if (scope.row['channel_id']) {
+        img_url = `${BU_DOU_CONFIG.APP_URL}groups/${scope.row['channel_id']}/avatar`;
       }
       return (
         <ElAvatar src={img_url} size={54}>
-          {scope.row['name']}
+          {scope.row['channel_name']}
         </ElAvatar>
       );
     }
   },
   {
-    prop: 'uid',
-    label: '用户ID',
-    minWidth: 300
+    prop: 'channel_id',
+    label: '被举报群ID',
+    width: 200
   },
   {
-    prop: 'short_no',
-    label: '悟空号'
+    prop: 'imgs',
+    label: '举报图片',
+    minWidth: 120
   },
   {
-    prop: 'sex',
-    label: '性别',
-    width: 60,
-    formatter(row: any) {
-      return row.sex === 1 ? '男' : '女';
-    }
+    prop: 'category_name',
+    label: '举报原因',
+    minWidth: 180
   },
   {
-    prop: 'register_time',
-    label: '注册时间',
+    prop: 'remark',
+    label: '举报说明',
+    minWidth: 170
+  },
+  {
+    prop: 'create_at',
+    label: '举报时间',
     width: 170
-  },
-  {
-    prop: 'last_online_time',
-    label: '封禁日期',
-    width: 150
-  },
-  {
-    prop: 'operation',
-    label: '操作',
-    align: 'center',
-    fixed: 'right',
-    width: 180,
-    render: (scope: any) => {
-      return (
-        <ElSpace>
-          <ElButton type="primary" onClick={() => aa(scope.row)}>
-            发消息
-          </ElButton>
-          <ElButton>更多</ElButton>
-        </ElSpace>
-      );
-    }
   }
 ]);
 const tableData = ref<any[]>([]);
@@ -152,14 +127,14 @@ const total = ref(0);
 
 // 查询
 const queryFrom = reactive({
-  keyword: '',
+  channel_type: '2',
   page_size: 15,
   page_index: 1
 });
 
-const getUserList = () => {
+const getTableList = () => {
   loadTable.value = true;
-  userListGet(queryFrom).then((res: any) => {
+  reportListGet(queryFrom).then((res: any) => {
     loadTable.value = false;
     tableData.value = res.list;
     total.value = res.count;
@@ -169,22 +144,18 @@ const getUserList = () => {
 // 分页page-size
 const onSizeChange = (size: number) => {
   queryFrom.page_size = size;
-  getUserList();
+  getTableList();
 };
 
 // 分页page-size
 const onCurrentChange = (current: number) => {
   queryFrom.page_index = current;
-  getUserList();
-};
-
-const aa = (a: any) => {
-  console.log(a);
+  getTableList();
 };
 
 // 初始化
 onMounted(() => {
-  getUserList();
+  getTableList();
 });
 </script>
 

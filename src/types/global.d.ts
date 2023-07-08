@@ -82,10 +82,11 @@ declare namespace Column {
   interface ColumnOptions {
     prop: string;
     label: string;
-    fixed?: string;
-    width?: number;
-    minWidth?: number;
-    align?: string;
+    type?: 'selection' | 'index' | 'expand';
+    fixed?: true | 'left' | 'right';
+    width?: string | number;
+    minWidth?: string | number;
+    align?: 'left' | 'center' | 'right';
     formatter?: (scope: any) => void;
     render?: (scope: any) => VNode;
   }
