@@ -8,11 +8,8 @@
         </div>
         <div class="flex items-center h-50px">
           <el-form inline>
-            <el-form-item class="mb-0 !mr-16px">
-              <el-input v-model="queryFrom.keyword" placeholder="uid/手机号/用户名" clearable />
-            </el-form-item>
             <el-form-item class="mb-0 !mr-0">
-              <el-button type="primary" @click="getUserList">查询</el-button>
+              <el-button type="primary">发送消息</el-button>
             </el-form-item>
           </el-form>
         </div>
@@ -63,86 +60,113 @@ meta:
 </route>
 
 <script lang="tsx" setup>
-import { ElButton, ElSpace, ElAvatar } from 'element-plus';
+import { ElButton, ElAvatar } from 'element-plus';
 import { BU_DOU_CONFIG } from '@/config';
 // API 接口
-import { userListGet } from '@/api/user';
+import { messageGet } from '@/api/message';
 /**
  * 表格
  */
-const column = reactive([
+const column = reactive<Column.ColumnOptions[]>([
   {
-    prop: 'name',
-    label: '用户名',
+    prop: 'sender_name',
+    label: '发送者名字',
     fixed: 'left',
     width: 140
   },
   {
-    prop: 'phone',
-    label: '手机号',
-    fixed: 'left',
+    prop: 'sender',
+    label: '发送者ID',
     width: 120
   },
   {
-    prop: 'avatar',
-    label: '头像',
+    prop: 'sender_avatar',
+    label: '发送者头像',
     align: 'center',
-    width: 80,
+    width: 100,
     render: (scope: any) => {
       let img_url = '';
-      if (scope.row['uid']) {
-        img_url = `${BU_DOU_CONFIG.APP_URL}users/${scope.row['uid']}/avatar`;
+      if (scope.row['sender']) {
+        img_url = `${BU_DOU_CONFIG.APP_URL}users/${scope.row['sender']}/avatar`;
       }
       return (
         <ElAvatar src={img_url} size={54}>
-          {scope.row['name']}
+          {scope.row['sender_name']}
         </ElAvatar>
       );
     }
   },
   {
-    prop: 'uid',
-    label: '用户ID',
-    minWidth: 300
+    prop: 'receiver',
+    label: '接受者ID',
+    width: 300
   },
   {
-    prop: 'short_no',
-    label: '悟空号'
+    prop: 'receiver_name',
+    label: '接受者名字',
+    width: 180
   },
   {
-    prop: 'sex',
-    label: '性别',
-    width: 60,
-    formatter(row: any) {
-      return row.sex === 1 ? '男' : '女';
+    prop: 'receiver_avatar',
+    label: '接受者头像',
+    align: 'center',
+    width: 100,
+    render: (scope: any) => {
+      let img_url = '';
+      if (scope.row['receiver']) {
+        img_url = `${BU_DOU_CONFIG.APP_URL}users/${scope.row['receiver']}/avatar`;
+      }
+      return (
+        <ElAvatar src={img_url} size={54}>
+          {scope.row['receiver_name']}
+        </ElAvatar>
+      );
     }
   },
   {
     prop: 'register_time',
-    label: '注册时间',
-    width: 170
+    label: '聊天类型',
+    width: 90,
+    formatter(row: any) {
+      return row['receiver_channel_type'] === 1 ? '单聊' : '群聊';
+    }
   },
   {
-    prop: 'last_online_time',
-    label: '封禁日期',
-    width: 150
+    prop: 'handler_uid',
+    label: '操作者ID',
+    width: 140
   },
   {
-    prop: 'operation',
-    label: '操作',
+    prop: 'handler_name',
+    label: '操作者名字',
+    width: 120
+  },
+  {
+    prop: 'handler_uid',
+    label: '操作者头像',
     align: 'center',
-    fixed: 'right',
-    width: 180,
+    width: 100,
     render: (scope: any) => {
+      let img_url = '';
+      if (scope.row['handler_uid']) {
+        img_url = `${BU_DOU_CONFIG.APP_URL}users/${scope.row['handler_uid']}/avatar`;
+      }
       return (
-        <ElSpace>
-          <ElButton type="primary" onClick={() => aa(scope.row)}>
-            发消息
-          </ElButton>
-          <ElButton>更多</ElButton>
-        </ElSpace>
+        <ElAvatar src={img_url} size={54}>
+          {scope.row['handler_name']}
+        </ElAvatar>
       );
     }
+  },
+  {
+    prop: 'content',
+    label: '消息内容',
+    width: 260
+  },
+  {
+    prop: 'created_at',
+    label: '消息发送时间',
+    width: 170
   }
 ]);
 const tableData = ref<any[]>([]);
@@ -152,14 +176,13 @@ const total = ref(0);
 
 // 查询
 const queryFrom = reactive({
-  keyword: '',
   page_size: 15,
   page_index: 1
 });
 
-const getUserList = () => {
+const getTableList = () => {
   loadTable.value = true;
-  userListGet(queryFrom).then((res: any) => {
+  messageGet(queryFrom).then((res: any) => {
     loadTable.value = false;
     tableData.value = res.list;
     total.value = res.count;
@@ -169,22 +192,18 @@ const getUserList = () => {
 // 分页page-size
 const onSizeChange = (size: number) => {
   queryFrom.page_size = size;
-  getUserList();
+  getTableList();
 };
 
 // 分页page-size
 const onCurrentChange = (current: number) => {
   queryFrom.page_index = current;
-  getUserList();
-};
-
-const aa = (a: any) => {
-  console.log(a);
+  getTableList();
 };
 
 // 初始化
 onMounted(() => {
-  getUserList();
+  getTableList();
 });
 </script>
 
