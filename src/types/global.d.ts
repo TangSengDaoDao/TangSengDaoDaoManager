@@ -78,3 +78,15 @@ type ObjToKeyValUnion<T> = {
 type ObjToKeyValArray<T> = {
   [K in keyof T]: [K, T[K]];
 }[keyof T];
+declare namespace Column {
+  interface ColumnOptions {
+    prop: string;
+    label: string;
+    fixed?: string;
+    width?: number;
+    minWidth?: number;
+    align?: string;
+    formatter?: (scope: any) => void;
+    render?: (scope: any) => VNode;
+  }
+}

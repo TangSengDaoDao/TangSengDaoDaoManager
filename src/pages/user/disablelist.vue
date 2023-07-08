@@ -66,7 +66,7 @@ meta:
 import { ElButton, ElSpace, ElAvatar } from 'element-plus';
 import { BU_DOU_CONFIG } from '@/config';
 // API 接口
-import { userListGet } from '@/api/user';
+import { userDisablelistGet } from '@/api/user';
 /**
  * 表格
  */
@@ -123,7 +123,7 @@ const column = reactive([
     width: 170
   },
   {
-    prop: 'last_online_time',
+    prop: 'closure_time',
     label: '封禁日期',
     width: 150
   },
@@ -132,14 +132,13 @@ const column = reactive([
     label: '操作',
     align: 'center',
     fixed: 'right',
-    width: 180,
+    width: 120,
     render: (scope: any) => {
       return (
         <ElSpace>
           <ElButton type="primary" onClick={() => aa(scope.row)}>
-            发消息
+            解禁
           </ElButton>
-          <ElButton>更多</ElButton>
         </ElSpace>
       );
     }
@@ -159,7 +158,7 @@ const queryFrom = reactive({
 
 const getUserList = () => {
   loadTable.value = true;
-  userListGet(queryFrom).then((res: any) => {
+  userDisablelistGet(queryFrom).then((res: any) => {
     loadTable.value = false;
     tableData.value = res.list;
     total.value = res.count;

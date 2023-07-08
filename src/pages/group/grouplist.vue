@@ -9,7 +9,7 @@
         <div class="flex items-center h-50px">
           <el-form inline>
             <el-form-item class="mb-0 !mr-16px">
-              <el-input v-model="queryFrom.keyword" placeholder="uid/手机号/用户名" clearable />
+              <el-input v-model="queryFrom.keyword" placeholder="群名称/群编号" clearable />
             </el-form-item>
             <el-form-item class="mb-0 !mr-0">
               <el-button type="primary" @click="getUserList">查询</el-button>
@@ -63,35 +63,35 @@ meta:
 </route>
 
 <script lang="tsx" setup>
-import { ElButton, ElSpace, ElAvatar } from 'element-plus';
+import { ElButton, ElSpace, ElAvatar, ElDropdown, ElDropdownMenu, ElDropdownItem } from 'element-plus';
 import { BU_DOU_CONFIG } from '@/config';
 // API 接口
-import { userListGet } from '@/api/user';
+import { groupListGet } from '@/api/group';
 /**
  * 表格
  */
-const column = reactive([
+const column = reactive<Column.ColumnOptions[]>([
   {
     prop: 'name',
-    label: '用户名',
+    label: '群名称',
     fixed: 'left',
-    width: 140
+    width: 200
   },
   {
-    prop: 'phone',
-    label: '手机号',
+    prop: 'group_no',
+    label: '群编号',
     fixed: 'left',
-    width: 120
+    width: 200
   },
   {
     prop: 'avatar',
-    label: '头像',
+    label: '群头像',
     align: 'center',
-    width: 80,
+    width: 100,
     render: (scope: any) => {
       let img_url = '';
-      if (scope.row['uid']) {
-        img_url = `${BU_DOU_CONFIG.APP_URL}users/${scope.row['uid']}/avatar`;
+      if (scope.row['group_no']) {
+        img_url = `${BU_DOU_CONFIG.APP_URL}groups/${scope.row['group_no']}/avatar`;
       }
       return (
         <ElAvatar src={img_url} size={54}>
@@ -101,31 +101,30 @@ const column = reactive([
     }
   },
   {
-    prop: 'uid',
-    label: '用户ID',
-    minWidth: 300
-  },
-  {
-    prop: 'short_no',
-    label: '悟空号'
-  },
-  {
-    prop: 'sex',
-    label: '性别',
-    width: 60,
+    prop: 'status',
+    label: '群状态',
+    width: 80,
     formatter(row: any) {
-      return row.sex === 1 ? '男' : '女';
+      return row.status === 1 ? '正常' : '封禁中';
     }
   },
   {
-    prop: 'register_time',
-    label: '注册时间',
-    width: 170
+    prop: 'member_count',
+    label: '群人数',
+    width: 80
   },
   {
-    prop: 'last_online_time',
-    label: '封禁日期',
-    width: 150
+    prop: 'create_name',
+    label: '群主名称'
+  },
+  {
+    prop: 'creator',
+    label: '群主ID'
+  },
+  {
+    prop: 'create_at',
+    label: '创建时间',
+    width: 180
   },
   {
     prop: 'operation',
@@ -139,7 +138,22 @@ const column = reactive([
           <ElButton type="primary" onClick={() => aa(scope.row)}>
             发消息
           </ElButton>
-          <ElButton>更多</ElButton>
+          <ElDropdown
+            v-slots={{
+              default: () => <ElButton>更多</ElButton>,
+              dropdown: () => {
+                return (
+                  <ElDropdownMenu>
+                    <ElDropdownItem onClick={() => bb(scope.row)}>群成员</ElDropdownItem>
+                    <ElDropdownItem>聊天记录</ElDropdownItem>
+                    <ElDropdownItem>黑名单成员</ElDropdownItem>
+                    <ElDropdownItem>{scope.row.forbidden === 1 ? '禁言中' : '禁言'}</ElDropdownItem>
+                    <ElDropdownItem>{scope.row.status === 1 ? '封禁' : '解禁'}</ElDropdownItem>
+                  </ElDropdownMenu>
+                );
+              }
+            }}
+          />
         </ElSpace>
       );
     }
@@ -159,7 +173,7 @@ const queryFrom = reactive({
 
 const getUserList = () => {
   loadTable.value = true;
-  userListGet(queryFrom).then((res: any) => {
+  groupListGet(queryFrom).then((res: any) => {
     loadTable.value = false;
     tableData.value = res.list;
     total.value = res.count;
@@ -179,6 +193,10 @@ const onCurrentChange = (current: number) => {
 };
 
 const aa = (a: any) => {
+  console.log(a);
+};
+
+const bb = (a: any) => {
   console.log(a);
 };
 

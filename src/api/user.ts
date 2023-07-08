@@ -8,3 +8,12 @@ export function userListGet(params: any) {
     params
   });
 }
+
+// 封禁用户列表
+export function userDisablelistGet(params: any) {
+  return request({
+    url: '/manager/user/disablelist',
+    method: 'get',
+    params
+  });
+}
