@@ -1,6 +1,6 @@
 <template>
   <div class="footer flex-center">
-    <a href="https://github.com" target="_blank"> 2023 © 悟空IM. </a>
+    <a href="https://github.com" target="_blank"> 2023 © 唐僧叨叨. </a>
   </div>
 </template>
 
