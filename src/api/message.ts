@@ -18,10 +18,19 @@ export function messageProhibitWordsGet(params: any) {
   });
 }
 
-// 聊天消息
+// 单聊天消息
 export function messageRecordpersonalGet(params: any) {
   return request({
     url: '/manager/message/recordpersonal',
+    method: 'get',
+    params
+  });
+}
+
+// 群聊天消息
+export function messageRecordGet(params: any) {
+  return request({
+    url: '/manager/message/record',
     method: 'get',
     params
   });

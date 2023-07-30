@@ -4,12 +4,15 @@
     <div class="flex-1 el-card border-none flex-col box-border overflow-hidden">
       <div class="h-50px pl-12px pr-12px box-border flex items-center justify-between bd-title">
         <div class="bd-title-left">
-          <p class="m-0 font-600">群列表</p>
+          <p class="m-0 font-600">
+            <el-text type="primary">{{ $route.query.name }}</el-text>
+            群成员
+          </p>
         </div>
         <div class="flex items-center h-50px">
           <el-form inline>
             <el-form-item class="mb-0 !mr-16px">
-              <el-input v-model="queryFrom.keyword" placeholder="群名称/群编号" clearable />
+              <el-input v-model="queryFrom.keyword" placeholder="成员昵称" clearable />
             </el-form-item>
             <el-form-item class="mb-0 !mr-0">
               <el-button type="primary" @click="getUserList">查询</el-button>
@@ -58,43 +61,37 @@
 
 <route lang="yaml">
 meta:
-  title: 群列表
+  title: 群成员
   isAffix: false
 </route>
 
 <script lang="tsx" setup>
-import { useRouter } from 'vue-router';
-import { ElButton, ElSpace, ElAvatar, ElDropdown, ElDropdownMenu, ElDropdownItem } from 'element-plus';
+import { useRoute } from 'vue-router';
+import { ElButton, ElSpace, ElText, ElAvatar, ElMessage, ElMessageBox } from 'element-plus';
 import { BU_DOU_CONFIG } from '@/config';
 // API 接口
-import { groupListGet } from '@/api/group';
+import { groupGroupmembersGet } from '@/api/group';
 
-const router = useRouter();
+const route = useRoute();
 /**
  * 表格
  */
 const column = reactive<Column.ColumnOptions[]>([
   {
     prop: 'name',
-    label: '群名称',
-    fixed: 'left',
-    width: 200
-  },
-  {
-    prop: 'group_no',
-    label: '群编号',
+    label: '用户昵称',
     fixed: 'left',
     width: 200
   },
   {
     prop: 'avatar',
-    label: '群头像',
+    label: '用户头像',
     align: 'center',
     width: 100,
     render: (scope: any) => {
       let img_url = '';
-      if (scope.row['group_no']) {
-        img_url = `${BU_DOU_CONFIG.APP_URL}groups/${scope.row['group_no']}/avatar`;
+      if (scope.row['uid']) {
+        img_url = `${BU_DOU_CONFIG.APP_URL}users/${scope.row['uid']}/avatar`;
       }
       return (
         <ElAvatar src={img_url} size={54}>
@@ -104,29 +101,38 @@ const column = reactive<Column.ColumnOptions[]>([
     }
   },
   {
+    prop: 'uid',
+    label: '用户ID',
+    fixed: 'left',
+    width: 320
+  },
+  {
     prop: 'status',
-    label: '群状态',
-    width: 80,
-    formatter(row: any) {
-      return row.status === 1 ? '正常' : '封禁中';
+    label: '成员角色',
+    width: 120,
+    render: (scope: any) => {
+      let text = '成员';
+      let type: any = 'primary';
+      // 群主
+      if (scope?.row['role'] == 1) {
+        text = '群主';
+        type = 'success';
+      }
+      // 群主
+      if (scope?.row['role'] == 2) {
+        text = '管理员';
+        type = 'warning';
+      }
+      return <ElText type={type}>{text}</ElText>;
     }
   },
   {
-    prop: 'member_count',
-    label: '群人数',
-    width: 80
+    prop: 'remark',
+    label: '群内备注'
   },
   {
-    prop: 'create_name',
-    label: '群主名称'
-  },
-  {
-    prop: 'creator',
-    label: '群主ID'
-  },
-  {
-    prop: 'create_at',
-    label: '创建时间',
+    prop: 'created_at',
+    label: '入群时间',
     width: 180
   },
   {
@@ -138,25 +144,10 @@ const column = reactive<Column.ColumnOptions[]>([
     render: (scope: any) => {
       return (
         <ElSpace>
-          <ElButton type="primary" onClick={() => aa(scope.row)}>
-            发消息
+          <ElButton type="primary">发消息</ElButton>
+          <ElButton type="danger" onClick={() => onDel(scope.row)}>
+            删除
           </ElButton>
-          <ElDropdown
-            v-slots={{
-              default: () => <ElButton class={'bu-button'}>更多</ElButton>,
-              dropdown: () => {
-                return (
-                  <ElDropdownMenu>
-                    <ElDropdownItem onClick={() => onGroupdisablelist(scope.row)}>群成员</ElDropdownItem>
-                    <ElDropdownItem onClick={() => onRcord(scope.row)}>聊天记录</ElDropdownItem>
-                    <ElDropdownItem onClick={() => onBlackList(scope.row)}>黑名单成员</ElDropdownItem>
-                    <ElDropdownItem>{scope.row.forbidden === 1 ? '禁言中' : '禁言'}</ElDropdownItem>
-                    <ElDropdownItem>{scope.row.status === 1 ? '封禁' : '解禁'}</ElDropdownItem>
-                  </ElDropdownMenu>
-                );
-              }
-            }}
-          />
         </ElSpace>
       );
     }
@@ -176,7 +167,7 @@ const queryFrom = reactive({
 
 const getUserList = () => {
   loadTable.value = true;
-  groupListGet(queryFrom).then((res: any) => {
+  groupGroupmembersGet(queryFrom, route.query.groupNo as string).then((res: any) => {
     loadTable.value = false;
     tableData.value = res.list;
     total.value = res.count;
@@ -195,41 +186,26 @@ const onCurrentChange = (current: number) => {
   getUserList();
 };
 
-// 群成员
-const onGroupdisablelist = (item: any) => {
-  router.push({
-    path: '/group/groupmembers',
-    query: {
-      groupNo: item.group_no,
-      name: item.name
-    }
-  });
-};
-
-// 聊天记录
-const onRcord = (item: any) => {
-  router.push({
-    path: '/message/record',
-    query: {
-      groupNo: item.group_no,
-      name: item.name
-    }
-  });
-};
-
-// 黑名单列表
-const onBlackList = (item: any) => {
-  router.push({
-    path: '/group/groupblacklist',
-    query: {
-      groupNo: item.group_no,
-      name: item.name
-    }
-  });
-};
-
-const aa = (a: any) => {
-  console.log(a);
+// 删除
+const onDel = (_item: any) => {
+  ElMessageBox.confirm('确定，是否删除此成员?', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    closeOnClickModal: false,
+    type: 'warning'
+  })
+    .then(() => {
+      ElMessage({
+        type: 'success',
+        message: '开发中..'
+      });
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: '取消成功！'
+      });
+    });
 };
 
 // 初始化

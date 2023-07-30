@@ -63,10 +63,10 @@ meta:
 </route>
 
 <script lang="tsx" setup>
-import { ElButton, ElSpace, ElAvatar } from 'element-plus';
+import { ElButton, ElSpace, ElAvatar, ElMessage, ElMessageBox } from 'element-plus';
 import { BU_DOU_CONFIG } from '@/config';
 // API 接口
-import { userDisablelistGet } from '@/api/user';
+import { userDisablelistGet, userLiftbanPut } from '@/api/user';
 /**
  * 表格
  */
@@ -136,7 +136,7 @@ const column = reactive([
     render: (scope: any) => {
       return (
         <ElSpace>
-          <ElButton type="primary" onClick={() => aa(scope.row)}>
+          <ElButton type="primary" onClick={() => onUseLiftban(scope.row)}>
             解禁
           </ElButton>
         </ElSpace>
@@ -177,8 +177,39 @@ const onCurrentChange = (current: number) => {
   getUserList();
 };
 
-const aa = (a: any) => {
-  console.log(a);
+// 解禁
+const onUseLiftban = (item: any) => {
+  ElMessageBox.confirm(`确定要解禁用户${item.name} 吗`, `解禁用户`, {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    closeOnClickModal: false,
+    type: 'warning'
+  })
+    .then(() => {
+      const fromLiftban = {
+        uid: item.uid,
+        status: 1
+      };
+      userLiftbanPut(fromLiftban)
+        .then((_res: any) => {
+          getUserList();
+          ElMessage({
+            type: 'success',
+            message: `解禁用户成功！`
+          });
+        })
+        .catch(err => {
+          if (err.status == 400) {
+            ElMessage.error(err.msg);
+          }
+        });
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: '取消成功！'
+      });
+    });
 };
 
 // 初始化

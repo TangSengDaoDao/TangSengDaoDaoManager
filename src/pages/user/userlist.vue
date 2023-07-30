@@ -65,16 +65,16 @@ meta:
 
 <script lang="tsx" setup>
 import { useRouter } from 'vue-router';
-import { ElButton, ElSpace, ElAvatar, ElDropdown, ElDropdownMenu, ElDropdownItem } from 'element-plus';
+import { ElButton, ElSpace, ElAvatar, ElDropdown, ElDropdownMenu, ElDropdownItem, ElMessage, ElMessageBox } from 'element-plus';
 import { BU_DOU_CONFIG } from '@/config';
 // API 接口
-import { userListGet } from '@/api/user';
+import { userListGet, userLiftbanPut } from '@/api/user';
 
 const router = useRouter();
 /**
  * 表格
  */
-const column = reactive([
+const column = reactive<Column.ColumnOptions[]>([
   {
     prop: 'name',
     label: '用户名',
@@ -180,13 +180,13 @@ const column = reactive([
                       <i-bd-every-user class={'mr-4px'} />
                       好友列表
                     </ElDropdownItem>
-                    <ElDropdownItem>
+                    <ElDropdownItem onClick={() => onUseBlackList(scope.row)}>
                       <i-bd-personal-privacy class={'mr-4px'} />
                       黑名单列表
                     </ElDropdownItem>
-                    <ElDropdownItem>
+                    <ElDropdownItem onClick={() => onUseLiftban(scope.row)}>
                       <i-bd-info class={'mr-4px'} />
-                      禁封
+                      {scope.row.status === 1 ? '封禁' : '解禁'}
                     </ElDropdownItem>
                   </ElDropdownMenu>
                 );
@@ -244,6 +244,53 @@ const onFriends = (item: any) => {
       name: item.name
     }
   });
+};
+
+// 黑名单列表
+const onUseBlackList = (item: any) => {
+  router.push({
+    path: '/user/userblacklist',
+    query: {
+      uid: item.uid,
+      name: item.name
+    }
+  });
+};
+
+// 用户封禁/解封操作
+const onUseLiftban = (item: any) => {
+  const text = item.status == 1 ? '封禁' : '解禁';
+  ElMessageBox.confirm(`确定要${text}用户${item.name} 吗`, `${text}用户`, {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    closeOnClickModal: false,
+    type: 'warning'
+  })
+    .then(() => {
+      const fromLiftban = {
+        uid: item.uid,
+        status: item.status == 1 ? 0 : 1
+      };
+      userLiftbanPut(fromLiftban)
+        .then((_res: any) => {
+          getUserList();
+          ElMessage({
+            type: 'success',
+            message: `${text}用户成功！`
+          });
+        })
+        .catch(err => {
+          if (err.status == 400) {
+            ElMessage.error(err.msg);
+          }
+        });
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: '取消成功！'
+      });
+    });
 };
 
 // 初始化

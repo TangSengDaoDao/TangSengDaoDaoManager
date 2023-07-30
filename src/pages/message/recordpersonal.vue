@@ -209,8 +209,7 @@ const onCurrentChange = (current: number) => {
 };
 
 // 删除
-const onDel = (item: any) => {
-  console.log(item);
+const onDel = (_item: any) => {
   ElMessageBox.confirm('确定，是否删除此消息?', '提示', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',

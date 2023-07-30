@@ -26,3 +26,20 @@ export function userFriendsGet(params: any) {
     params
   });
 }
+
+// 黑名单列表
+export function userBlacklistGet(params: any) {
+  return request({
+    url: 'manager/user/blacklist',
+    method: 'get',
+    params
+  });
+}
+
+// 用户封禁/解禁
+export function userLiftbanPut(params: any) {
+  return request({
+    url: `manager/user/liftban/${params.uid}/${params.status}`,
+    method: 'put'
+  });
+}
