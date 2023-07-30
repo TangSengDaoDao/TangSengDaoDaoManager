@@ -14,5 +14,5 @@ export const ROUTER_WHITE_LIST: string[] = ['/login'];
 export const BU_DOU_CONFIG = {
   APP_TITLE: '唐僧叨叨后台管理',
   APP_TITLE_SHORT: '唐僧',
-  APP_URL: 'https://chatapi.githubim.com/v1/'
+  APP_URL: 'https://api.botgate.cn/v1/'
 };

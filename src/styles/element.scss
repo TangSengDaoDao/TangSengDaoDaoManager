@@ -263,3 +263,7 @@
   height: 48px !important;
   line-height: 48px !important;
 }
+/* bu-button*/
+.bu-button:focus-visible {
+  outline: 0;
+}

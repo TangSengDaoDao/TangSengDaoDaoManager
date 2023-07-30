@@ -59,7 +59,7 @@
 
 <route lang="yaml">
 meta:
-  title: 用户列表
+  title: 好友列表
   isAffix: false
 </route>
 
@@ -169,22 +169,16 @@ const column = reactive([
           </ElButton>
           <ElDropdown
             v-slots={{
-              default: () => <ElButton class={'bu-button'}>更多</ElButton>,
+              default: () => <ElButton>更多</ElButton>,
               dropdown: () => {
                 return (
                   <ElDropdownMenu>
                     <ElDropdownItem onClick={() => bb(scope.row)}>
-                      <i-bd-every-user class={'mr-4px'} />
+                      <i-bd-every-user />
                       好友列表
                     </ElDropdownItem>
-                    <ElDropdownItem>
-                      <i-bd-personal-privacy class={'mr-4px'} />
-                      黑名单列表
-                    </ElDropdownItem>
-                    <ElDropdownItem>
-                      <i-bd-info class={'mr-4px'} />
-                      禁封
-                    </ElDropdownItem>
+                    <ElDropdownItem>黑名单列表</ElDropdownItem>
+                    <ElDropdownItem>禁封</ElDropdownItem>
                   </ElDropdownMenu>
                 );
               }
