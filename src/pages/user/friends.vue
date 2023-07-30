@@ -1,5 +1,5 @@
 <template>
-  <div class="wh-full flex-col">
+  <bd-page class="flex-col">
     <!-- 布局 -->
 
     <div class="flex-1 el-card border-none flex-col box-border overflow-hidden">
@@ -57,7 +57,7 @@
         />
       </div>
     </div>
-  </div>
+  </bd-page>
 </template>
 
 <route lang="yaml">

@@ -1,6 +1,7 @@
 import { createApp } from 'vue';
 import App from '@/App.vue';
 import ElementPlus from 'element-plus';
+import VueGridLayout from 'vue-grid-layout';
 // icon-park
 import { install } from '@icon-park/vue-next/es/all';
 // element icons
@@ -28,6 +29,7 @@ Object.keys(Icons).forEach(key => {
   app.component(key, Icons[key as keyof typeof Icons]);
 });
 app.use(ElementPlus);
+app.use(VueGridLayout);
 app.use(directives);
 app.use(router);
 app.use(I18n);

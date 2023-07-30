@@ -7,3 +7,6 @@ declare module '*.vue' {
   const component: DefineComponent<{}, {}, any>;
   export default component;
 }
+
+// vue-grid-layout
+declare module 'vue-grid-layout';

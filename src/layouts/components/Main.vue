@@ -83,7 +83,7 @@ const onExitMaximizeClick = () => {
 <style lang="scss" scoped>
 .el-main {
   box-sizing: border-box;
-  padding: 10px 12px;
+  padding: 0;
   overflow-x: hidden;
   background-color: var(--el-bg-color-page);
 }
