@@ -17,3 +17,12 @@ export function messageProhibitWordsGet(params: any) {
     params
   });
 }
+
+// 聊天消息
+export function messageRecordpersonalGet(params: any) {
+  return request({
+    url: '/manager/message/recordpersonal',
+    method: 'get',
+    params
+  });
+}

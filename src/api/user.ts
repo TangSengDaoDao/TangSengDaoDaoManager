@@ -17,3 +17,12 @@ export function userDisablelistGet(params: any) {
     params
   });
 }
+
+// 好友列表
+export function userFriendsGet(params: any) {
+  return request({
+    url: 'manager/user/friends',
+    method: 'get',
+    params
+  });
+}

@@ -5,12 +5,17 @@
     <div class="flex-1 el-card border-none flex-col box-border overflow-hidden">
       <div class="h-50px pl-12px pr-12px box-border flex items-center justify-between bd-title">
         <div class="bd-title-left">
-          <p class="m-0 font-600">用户列表</p>
+          <p class="m-0 font-600">
+            <el-text type="primary">{{ $route.query.name }}</el-text>
+            和
+            <el-text type="primary">{{ $route.query.toname }}</el-text>
+            聊天记录
+          </p>
         </div>
         <div class="flex items-center h-50px">
           <el-form inline>
             <el-form-item class="mb-0 !mr-16px">
-              <el-input v-model="queryFrom.keyword" placeholder="uid/手机号/用户名" clearable />
+              <el-input v-model="queryFrom.keyword" placeholder="发送者名字/消息内容" clearable />
             </el-form-item>
             <el-form-item class="mb-0 !mr-0">
               <el-button type="primary" @click="getUserList">查询</el-button>
@@ -59,140 +64,110 @@
 
 <route lang="yaml">
 meta:
-  title: 用户列表
+  title: 聊天记录
   isAffix: false
 </route>
 
 <script lang="tsx" setup>
-import { useRouter } from 'vue-router';
-import { ElButton, ElSpace, ElAvatar, ElDropdown, ElDropdownMenu, ElDropdownItem } from 'element-plus';
+import { useRoute } from 'vue-router';
+import { ElButton, ElSpace, ElAvatar, ElMessage, ElMessageBox } from 'element-plus';
 import { BU_DOU_CONFIG } from '@/config';
 // API 接口
-import { userListGet } from '@/api/user';
+import { messageRecordpersonalGet } from '@/api/message';
 
-const router = useRouter();
+const route = useRoute();
 /**
  * 表格
  */
-const column = reactive([
+const column = reactive<Column.ColumnOptions[]>([
   {
-    prop: 'name',
-    label: '用户名',
+    prop: 'message_id',
+    label: '消息编号',
     fixed: 'left',
     width: 140
   },
   {
-    prop: 'phone',
-    label: '手机号',
-    fixed: 'left',
+    prop: 'sender_name',
+    label: '发送者名字',
     width: 120
   },
   {
+    prop: 'sender',
+    label: '发送者ID',
+    width: 140
+  },
+  {
     prop: 'avatar',
-    label: '头像',
+    label: '发送者头像',
     align: 'center',
-    width: 80,
+    width: 100,
     render: (scope: any) => {
       let img_url = '';
-      if (scope.row['uid']) {
-        img_url = `${BU_DOU_CONFIG.APP_URL}users/${scope.row['uid']}/avatar`;
+      if (scope.row['sender']) {
+        img_url = `${BU_DOU_CONFIG.APP_URL}users/${scope.row['sender']}/avatar`;
       }
       return (
         <ElAvatar src={img_url} size={54}>
-          {scope.row['name']}
+          {scope.row['sender_name']}
         </ElAvatar>
       );
     }
   },
   {
-    prop: 'uid',
-    label: '用户ID',
-    minWidth: 300
+    prop: 'payload',
+    label: '消息内容',
+    minWidth: 300,
+    render: (scope: any) => {
+      const showContent = scope.row['payload'];
+      // 是否加密
+      if (scope.row['is_encrypt'] == 1) {
+        return '加密消息，无法查看';
+      } else {
+        return showContent?.content;
+      }
+    }
   },
   {
-    prop: 'status',
-    label: '用户状态',
+    prop: 'is_encrypt',
+    label: '是否加密',
     width: 86,
     formatter(row: any) {
-      return row.status === 1 ? '正常' : '封禁';
+      return row.is_encrypt === 1 ? '是' : '否';
     }
   },
   {
-    prop: 'short_no',
-    label: '悟空号',
-    width: 180
-  },
-  {
-    prop: 'sex',
-    label: '性别',
-    width: 60,
+    prop: 'revoke',
+    label: '是否撤回',
+    width: 120,
     formatter(row: any) {
-      return row.sex === 1 ? '男' : '女';
+      return row.revoke === 1 ? '是' : '否';
     }
   },
   {
-    prop: 'register_time',
-    label: '注册时间',
+    prop: 'is_deleted',
+    label: '是否删除',
+    width: 120,
+    formatter(row: any) {
+      return row.is_deleted === 1 ? '是' : '否';
+    }
+  },
+  {
+    prop: 'created_at',
+    label: '发送时间',
     width: 170
-  },
-  {
-    prop: 'device_name',
-    label: '登录设备',
-    width: 140
-  },
-  {
-    prop: 'device_model',
-    label: '登录设备型号',
-    width: 140
-  },
-  {
-    prop: 'online',
-    label: '在线状态',
-    width: 90,
-    formatter(row: any) {
-      return row.online === 1 ? '在线' : '离线';
-    }
-  },
-  {
-    prop: 'last_online_time',
-    label: '最后离线时间',
-    width: 150
   },
   {
     prop: 'operation',
     label: '操作',
     align: 'center',
     fixed: 'right',
-    width: 180,
+    width: 100,
     render: (scope: any) => {
       return (
         <ElSpace>
-          <ElButton type="primary" onClick={() => aa(scope.row)}>
-            发消息
+          <ElButton type="danger" onClick={() => onDel(scope.row)}>
+            删除
           </ElButton>
-          <ElDropdown
-            v-slots={{
-              default: () => <ElButton class={'bu-button'}>更多</ElButton>,
-              dropdown: () => {
-                return (
-                  <ElDropdownMenu>
-                    <ElDropdownItem onClick={() => onFriends(scope.row)}>
-                      <i-bd-every-user class={'mr-4px'} />
-                      好友列表
-                    </ElDropdownItem>
-                    <ElDropdownItem>
-                      <i-bd-personal-privacy class={'mr-4px'} />
-                      黑名单列表
-                    </ElDropdownItem>
-                    <ElDropdownItem>
-                      <i-bd-info class={'mr-4px'} />
-                      禁封
-                    </ElDropdownItem>
-                  </ElDropdownMenu>
-                );
-              }
-            }}
-          />
         </ElSpace>
       );
     }
@@ -206,13 +181,15 @@ const total = ref(0);
 // 查询
 const queryFrom = reactive({
   keyword: '',
+  uid: route.query.uid,
+  touid: route.query.touid,
   page_size: 15,
   page_index: 1
 });
 
 const getUserList = () => {
   loadTable.value = true;
-  userListGet(queryFrom).then((res: any) => {
+  messageRecordpersonalGet(queryFrom).then((res: any) => {
     loadTable.value = false;
     tableData.value = res.list;
     total.value = res.count;
@@ -231,19 +208,27 @@ const onCurrentChange = (current: number) => {
   getUserList();
 };
 
-const aa = (a: any) => {
-  console.log(a);
-};
-
-// 好友列表
-const onFriends = (item: any) => {
-  router.push({
-    path: '/user/friends',
-    query: {
-      uid: item.uid,
-      name: item.name
-    }
-  });
+// 删除
+const onDel = (item: any) => {
+  console.log(item);
+  ElMessageBox.confirm('确定，是否删除此消息?', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    closeOnClickModal: false,
+    type: 'warning'
+  })
+    .then(() => {
+      ElMessage({
+        type: 'success',
+        message: '开发中..'
+      });
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: '取消成功！'
+      });
+    });
 };
 
 // 初始化

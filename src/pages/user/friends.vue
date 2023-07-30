@@ -5,7 +5,10 @@
     <div class="flex-1 el-card border-none flex-col box-border overflow-hidden">
       <div class="h-50px pl-12px pr-12px box-border flex items-center justify-between bd-title">
         <div class="bd-title-left">
-          <p class="m-0 font-600">用户列表</p>
+          <p class="m-0 font-600">
+            <el-text type="primary">{{ $route.query.name }}</el-text>
+            的好友
+          </p>
         </div>
         <div class="flex items-center h-50px">
           <el-form inline>
@@ -64,31 +67,28 @@ meta:
 </route>
 
 <script lang="tsx" setup>
-import { ElButton, ElSpace, ElAvatar, ElDropdown, ElDropdownMenu, ElDropdownItem } from 'element-plus';
+import { useRoute, useRouter } from 'vue-router';
+import { ElButton, ElSpace, ElAvatar } from 'element-plus';
 import { BU_DOU_CONFIG } from '@/config';
 // API 接口
-import { userListGet } from '@/api/user';
+import { userFriendsGet } from '@/api/user';
+
+const route = useRoute();
+const router = useRouter();
 /**
  * 表格
  */
-const column = reactive([
+const column = reactive<Column.ColumnOptions[]>([
   {
     prop: 'name',
-    label: '用户名',
-    fixed: 'left',
+    label: '好友昵称',
     width: 140
   },
   {
-    prop: 'phone',
-    label: '手机号',
-    fixed: 'left',
-    width: 120
-  },
-  {
     prop: 'avatar',
-    label: '头像',
+    label: '好友头像',
     align: 'center',
-    width: 80,
+    width: 90,
     render: (scope: any) => {
       let img_url = '';
       if (scope.row['uid']) {
@@ -103,87 +103,28 @@ const column = reactive([
   },
   {
     prop: 'uid',
-    label: '用户ID',
-    minWidth: 300
+    label: '好友ID'
   },
   {
-    prop: 'status',
-    label: '用户状态',
-    width: 86,
-    formatter(row: any) {
-      return row.status === 1 ? '正常' : '封禁';
-    }
+    prop: 'relationship_time',
+    label: '成为好友时间'
   },
   {
-    prop: 'short_no',
-    label: '悟空号',
-    width: 180
-  },
-  {
-    prop: 'sex',
-    label: '性别',
-    width: 60,
-    formatter(row: any) {
-      return row.sex === 1 ? '男' : '女';
-    }
-  },
-  {
-    prop: 'register_time',
-    label: '注册时间',
-    width: 170
-  },
-  {
-    prop: 'device_name',
-    label: '登录设备',
-    width: 140
-  },
-  {
-    prop: 'device_model',
-    label: '登录设备型号',
-    width: 140
-  },
-  {
-    prop: 'online',
-    label: '在线状态',
-    width: 90,
-    formatter(row: any) {
-      return row.online === 1 ? '在线' : '离线';
-    }
-  },
-  {
-    prop: 'last_online_time',
-    label: '最后离线时间',
-    width: 150
+    prop: 'remark',
+    label: '备注'
   },
   {
     prop: 'operation',
     label: '操作',
     align: 'center',
     fixed: 'right',
-    width: 180,
+    width: 124,
     render: (scope: any) => {
       return (
         <ElSpace>
-          <ElButton type="primary" onClick={() => aa(scope.row)}>
-            发消息
+          <ElButton type="primary" onClick={() => onRecordpersonal(scope.row)}>
+            聊天记录
           </ElButton>
-          <ElDropdown
-            v-slots={{
-              default: () => <ElButton>更多</ElButton>,
-              dropdown: () => {
-                return (
-                  <ElDropdownMenu>
-                    <ElDropdownItem onClick={() => bb(scope.row)}>
-                      <i-bd-every-user />
-                      好友列表
-                    </ElDropdownItem>
-                    <ElDropdownItem>黑名单列表</ElDropdownItem>
-                    <ElDropdownItem>禁封</ElDropdownItem>
-                  </ElDropdownMenu>
-                );
-              }
-            }}
-          />
         </ElSpace>
       );
     }
@@ -197,16 +138,17 @@ const total = ref(0);
 // 查询
 const queryFrom = reactive({
   keyword: '',
+  uid: route.query.uid,
   page_size: 15,
   page_index: 1
 });
 
 const getUserList = () => {
   loadTable.value = true;
-  userListGet(queryFrom).then((res: any) => {
+  userFriendsGet(queryFrom).then((res: any) => {
     loadTable.value = false;
-    tableData.value = res.list;
-    total.value = res.count;
+    tableData.value = res;
+    total.value = res.length;
   });
 };
 
@@ -221,13 +163,17 @@ const onCurrentChange = (current: number) => {
   queryFrom.page_index = current;
   getUserList();
 };
-
-const aa = (a: any) => {
-  console.log(a);
-};
-
-const bb = (a: any) => {
-  console.log(a);
+// 聊天记录
+const onRecordpersonal = (item: any) => {
+  router.push({
+    path: '/message/recordpersonal',
+    query: {
+      name: route.query.name,
+      uid: route.query.uid,
+      touid: item.uid,
+      toname: item.name
+    }
+  });
 };
 
 // 初始化
