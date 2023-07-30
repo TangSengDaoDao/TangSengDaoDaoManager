@@ -63,10 +63,10 @@ meta:
 </route>
 
 <script lang="tsx" setup>
-import { ElButton, ElSpace, ElAvatar } from 'element-plus';
+import { ElButton, ElSpace, ElAvatar, ElMessage, ElMessageBox } from 'element-plus';
 import { BU_DOU_CONFIG } from '@/config';
 // API 接口
-import { groupDisablelistGet } from '@/api/group';
+import { groupDisablelistGet, groupLiftbanPut } from '@/api/group';
 /**
  * 表格
  */
@@ -101,11 +101,11 @@ const column = reactive<Column.ColumnOptions[]>([
     label: '群人数'
   },
   {
-    prop: 'short_no',
+    prop: 'create_name',
     label: '群主名称'
   },
   {
-    prop: 'register_time',
+    prop: 'create_at',
     label: '创建时间'
   },
   {
@@ -117,7 +117,7 @@ const column = reactive<Column.ColumnOptions[]>([
     render: (scope: any) => {
       return (
         <ElSpace>
-          <ElButton type="primary" onClick={() => aa(scope.row)}>
+          <ElButton type="primary" onClick={() => onLiftban(scope.row)}>
             解禁
           </ElButton>
         </ElSpace>
@@ -157,9 +157,40 @@ const onCurrentChange = (current: number) => {
   queryFrom.page_index = current;
   getTableList();
 };
-
-const aa = (a: any) => {
-  console.log(a);
+// 封禁/解封操作
+const onLiftban = (item: any) => {
+  const text = item.status == 1 ? '封禁' : '解禁';
+  ElMessageBox.confirm(`确定要对群组${item.name}${text}吗?`, `${text}群组`, {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    closeOnClickModal: false,
+    type: 'warning'
+  })
+    .then(() => {
+      const fromLiftban = {
+        groupNo: item.group_no,
+        status: item.status == 1 ? 0 : 1
+      };
+      groupLiftbanPut(fromLiftban)
+        .then((_res: any) => {
+          getTableList();
+          ElMessage({
+            type: 'success',
+            message: `${text}群组成功！`
+          });
+        })
+        .catch(err => {
+          if (err.status == 400) {
+            ElMessage.error(err.msg);
+          }
+        });
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: '取消成功！'
+      });
+    });
 };
 
 // 初始化

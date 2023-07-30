@@ -35,3 +35,19 @@ export function groupBlacklistGet(params: any, groupNo: string) {
     params
   });
 }
+
+// 禁言/解除禁言
+export function groupForbiddenPut(params: any) {
+  return request({
+    url: `/manager/groups/${params.groupNo}/forbidden/${params.forbidden}`,
+    method: 'put'
+  });
+}
+
+// 封禁/解禁
+export function groupLiftbanPut(params: any) {
+  return request({
+    url: `/manager/group/liftban/${params.groupNo}/${params.status}`,
+    method: 'put'
+  });
+}

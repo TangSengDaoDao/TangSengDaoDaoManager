@@ -9,13 +9,7 @@
 
     <template #dropdown>
       <el-dropdown-menu class="w-180px">
-        <el-dropdown-item>
-          <el-icon>
-            <i-bd-gold-medal-two theme="outline" size="24" />
-          </el-icon>
-          当前积分
-        </el-dropdown-item>
-        <el-dropdown-item>
+        <el-dropdown-item @click="onChangePassword">
           <el-icon>
             <i-bd-lock theme="outline" size="24" />
           </el-icon>
@@ -41,6 +35,13 @@ const userStore = useUserStore();
 const username = computed(() => {
   return userStore.userInfo.name;
 });
+
+// 修改密码
+const onChangePassword = () => {
+  router.push({
+    path: '/setting/updatepwd'
+  });
+};
 
 // 退出登录
 const onLogoutClick = () => {

@@ -1,5 +1,14 @@
 import request from '@/utils/axios';
 
+// 添加用户
+export function userAddPost(data: any) {
+  return request({
+    url: '/manager/user/add',
+    method: 'post',
+    data
+  });
+}
+
 // 用户列表
 export function userListGet(params: any) {
   return request({

@@ -12,7 +12,7 @@
               <el-input v-model="queryFrom.keyword" placeholder="群名称/群编号" clearable />
             </el-form-item>
             <el-form-item class="mb-0 !mr-0">
-              <el-button type="primary" @click="getUserList">查询</el-button>
+              <el-button type="primary" @click="getTableList">查询</el-button>
             </el-form-item>
           </el-form>
         </div>
@@ -64,10 +64,10 @@ meta:
 
 <script lang="tsx" setup>
 import { useRouter } from 'vue-router';
-import { ElButton, ElSpace, ElAvatar, ElDropdown, ElDropdownMenu, ElDropdownItem } from 'element-plus';
+import { ElButton, ElSpace, ElAvatar, ElDropdown, ElDropdownMenu, ElDropdownItem, ElMessage, ElMessageBox } from 'element-plus';
 import { BU_DOU_CONFIG } from '@/config';
 // API 接口
-import { groupListGet } from '@/api/group';
+import { groupListGet, groupForbiddenPut, groupLiftbanPut } from '@/api/group';
 
 const router = useRouter();
 /**
@@ -147,11 +147,26 @@ const column = reactive<Column.ColumnOptions[]>([
               dropdown: () => {
                 return (
                   <ElDropdownMenu>
-                    <ElDropdownItem onClick={() => onGroupdisablelist(scope.row)}>群成员</ElDropdownItem>
-                    <ElDropdownItem onClick={() => onRcord(scope.row)}>聊天记录</ElDropdownItem>
-                    <ElDropdownItem onClick={() => onBlackList(scope.row)}>黑名单成员</ElDropdownItem>
-                    <ElDropdownItem>{scope.row.forbidden === 1 ? '禁言中' : '禁言'}</ElDropdownItem>
-                    <ElDropdownItem>{scope.row.status === 1 ? '封禁' : '解禁'}</ElDropdownItem>
+                    <ElDropdownItem onClick={() => onGroupdisablelist(scope.row)}>
+                      <i-bd-every-user class={'mr-4px'} />
+                      群成员
+                    </ElDropdownItem>
+                    <ElDropdownItem onClick={() => onRcord(scope.row)}>
+                      <i-bd-log class={'mr-4px'} />
+                      聊天记录
+                    </ElDropdownItem>
+                    <ElDropdownItem onClick={() => onBlackList(scope.row)}>
+                      <i-bd-people-unknown class={'mr-4px'} />
+                      黑名单成员
+                    </ElDropdownItem>
+                    <ElDropdownItem onClick={() => onForbidden(scope.row)}>
+                      <i-bd-forbid class={'mr-4px'} />
+                      {scope.row.forbidden === 1 ? '禁言中' : '禁言'}
+                    </ElDropdownItem>
+                    <ElDropdownItem onClick={() => onLiftban(scope.row)}>
+                      <i-bd-info class={'mr-4px'} />
+                      {scope.row.status === 1 ? '封禁' : '解禁'}
+                    </ElDropdownItem>
                   </ElDropdownMenu>
                 );
               }
@@ -174,7 +189,7 @@ const queryFrom = reactive({
   page_index: 1
 });
 
-const getUserList = () => {
+const getTableList = () => {
   loadTable.value = true;
   groupListGet(queryFrom).then((res: any) => {
     loadTable.value = false;
@@ -186,13 +201,18 @@ const getUserList = () => {
 // 分页page-size
 const onSizeChange = (size: number) => {
   queryFrom.page_size = size;
-  getUserList();
+  getTableList();
 };
 
 // 分页page-size
 const onCurrentChange = (current: number) => {
   queryFrom.page_index = current;
-  getUserList();
+  getTableList();
+};
+
+// 发消息
+const aa = (a: any) => {
+  console.log(a);
 };
 
 // 群成员
@@ -228,13 +248,80 @@ const onBlackList = (item: any) => {
   });
 };
 
-const aa = (a: any) => {
-  console.log(a);
+// 禁言/解除禁言操作
+const onForbidden = (item: any) => {
+  const text = item.forbidden == 1 ? '禁言' : '解除禁言';
+  ElMessageBox.confirm(`确定要对群组${item.name}${text}吗?`, `${text}群组`, {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    closeOnClickModal: false,
+    type: 'warning'
+  })
+    .then(() => {
+      const fromLiftban = {
+        groupNo: item.group_no,
+        forbidden: item.forbidden == 1 ? 0 : 1
+      };
+      groupForbiddenPut(fromLiftban)
+        .then((_res: any) => {
+          getTableList();
+          ElMessage({
+            type: 'success',
+            message: `${text}群组成功！`
+          });
+        })
+        .catch(err => {
+          if (err.status == 400) {
+            ElMessage.error(err.msg);
+          }
+        });
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: '取消成功！'
+      });
+    });
 };
 
+// 封禁/解封操作
+const onLiftban = (item: any) => {
+  const text = item.status == 1 ? '封禁' : '解禁';
+  ElMessageBox.confirm(`确定要对群组${item.name}${text}吗?`, `${text}群组`, {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    closeOnClickModal: false,
+    type: 'warning'
+  })
+    .then(() => {
+      const fromLiftban = {
+        groupNo: item.group_no,
+        status: item.status == 1 ? 0 : 1
+      };
+      groupLiftbanPut(fromLiftban)
+        .then((_res: any) => {
+          getTableList();
+          ElMessage({
+            type: 'success',
+            message: `${text}群组成功！`
+          });
+        })
+        .catch(err => {
+          if (err.status == 400) {
+            ElMessage.error(err.msg);
+          }
+        });
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: '取消成功！'
+      });
+    });
+};
 // 初始化
 onMounted(() => {
-  getUserList();
+  getTableList();
 });
 </script>
 

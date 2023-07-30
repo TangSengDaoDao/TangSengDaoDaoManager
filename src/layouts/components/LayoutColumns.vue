@@ -21,7 +21,7 @@
         </div>
       </el-scrollbar>
     </div>
-    <el-aside :style="{ width: isCollapse ? '65px' : '210px' }">
+    <el-aside :class="{ 'not-aside': !subMenuList.length }" :style="{ width: isCollapse ? '65px' : '210px' }">
       <div class="logo flex-center">
         <span class="logo-text">
           {{ isCollapse ? APP_TITLE_SHORT : APP_TITLE }}
