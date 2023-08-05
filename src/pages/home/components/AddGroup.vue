@@ -4,6 +4,18 @@
       <div class="bd-title-left">
         <p class="m-0 font-600">新建群数量统计</p>
       </div>
+      <div class="bd-tittle-right">
+        <el-date-picker
+          v-model="dates"
+          type="daterange"
+          class="!w-220px"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          :clearable="false"
+          value-format="YYYY-MM-DD"
+          @change="changeDatas"
+        />
+      </div>
     </div>
     <div class="flex-1 flex overflow-hidden p-12px">
       <div class="flex-1">
@@ -77,7 +89,7 @@ const option: any = reactive({
     }
   ],
   series: {
-    name: 'Direct',
+    name: '群数',
     type: 'bar',
     emphasis: {
       focus: 'series'
@@ -109,6 +121,11 @@ const getStatisticsCreatedgroup = () => {
     myChart && myChart.resize();
     window.addEventListener('resize', echartsResize);
   });
+};
+
+// 日期切换
+const changeDatas = (_data: string[]) => {
+  getStatisticsCreatedgroup();
 };
 
 const echartsResize = () => {
