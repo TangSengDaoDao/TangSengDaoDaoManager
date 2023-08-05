@@ -1,7 +1,6 @@
 <template>
   <bd-page class="flex-col">
     <!-- 布局 -->
-
     <div class="flex-1 el-card border-none flex-col box-border overflow-hidden">
       <div class="h-50px pl-12px pr-12px box-border flex items-center justify-between bd-title">
         <div class="bd-title-left">
@@ -69,6 +68,7 @@ meta:
 <script lang="tsx" setup>
 import { useRoute } from 'vue-router';
 import { ElButton, ElSpace, ElAvatar, ElMessage, ElMessageBox } from 'element-plus';
+import BdMsg from '@/components/BdMsg/index.vue';
 import { BU_DOU_CONFIG } from '@/config';
 // API 接口
 import { messageRecordGet, messageDelete } from '@/api/message';
@@ -116,12 +116,14 @@ const column = reactive<Column.ColumnOptions[]>([
     label: '消息内容',
     minWidth: 300,
     render: (scope: any) => {
-      const showContent = scope.row['payload'];
-      // 是否加密
-      if (scope.row['is_encrypt'] == 1) {
-        return '加密消息，无法查看';
-      } else {
-        return showContent?.content;
+      if (scope.row['payload']) {
+        const showContent = scope.row['payload'];
+        // 是否加密
+        if (scope.row['is_encrypt'] == 1) {
+          return '[加密消息，无法查看]';
+        } else {
+          return <BdMsg msg={showContent} />;
+        }
       }
     }
   },

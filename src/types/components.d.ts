@@ -9,6 +9,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     AddNode: typeof import('./../components/bdWorkflow/nodes/addNode.vue')['default']
     Approver: typeof import('./../components/bdWorkflow/nodes/approver.vue')['default']
+    BdMsg: typeof import('./../components/BdMsg/index.vue')['default']
     BdPage: typeof import('./../components/BdPage/index.vue')['default']
     BdSandAllMsg: typeof import('./../components/BdSandAllMsg/index.vue')['default']
     BdSendMsg: typeof import('./../components/BdSendMsg/index.vue')['default']

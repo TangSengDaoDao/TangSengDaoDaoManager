@@ -88,6 +88,6 @@ declare namespace Column {
     minWidth?: string | number;
     align?: 'left' | 'center' | 'right';
     formatter?: (scope: any) => void;
-    render?: (scope: any) => VNode;
+    render?: (scope?: any) => void;
   }
 }
