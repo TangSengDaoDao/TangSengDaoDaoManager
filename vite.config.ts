@@ -26,7 +26,13 @@ const plugins = [
     dts: 'src/types/components.d.ts'
   }),
   VueDevTools(),
-  vue(),
+  vue({
+    template: {
+      compilerOptions: {
+        isCustomElement: tag => /^tgs-player/.test(tag)
+      }
+    }
+  }),
   vueJsx(),
   htmlTemplate({
     data: {
@@ -95,7 +101,8 @@ export default defineConfig({
         manualChunks: {
           // 分包配置，配置完成自动按需加载
           vue: ['vue', 'vue-router', 'pinia', 'vue-i18n', 'element-plus'],
-          echarts: ['echarts']
+          echarts: ['echarts'],
+          'tgs-player': ['@lottiefiles/lottie-player/dist/tgs-player']
         }
       }
     }

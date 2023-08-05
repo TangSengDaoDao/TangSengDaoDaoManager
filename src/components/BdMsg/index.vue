@@ -5,17 +5,17 @@
       {{ msg['content'] }}
     </span>
     <!-- 图片 -->
-    <img v-else-if="msg.type == 2" class="h-220px" :src="`${url}${msg['url']}`" />
+    <img v-else-if="msg.type == 2" class="w-120px" :src="`${url}${msg['url']}`" />
     <!-- GIF -->
-    <img v-else-if="msg.type == 3" class="w-320px" :src="`${url}${msg['url']}`" />
+    <img v-else-if="msg.type == 3" class="w-120px" :src="`${url}${msg['url']}`" />
     <!-- 语音 -->
     <audio v-else-if="msg.type == 4" :src="`${url}${msg['url']}`"></audio>
     <!-- 视频 -->
     <video v-else-if="msg.type == 5" controls :src="`${url}${msg['url']}`" class="w-25px h-200px"></video>
     <!-- 位置 -->
     <div v-else-if="msg.type == 6">
-      <div>{{ msg['title'] }}</div>
-      <div>{{ msg['address'] }}</div>
+      <div>位置标题：{{ msg['title'] }}</div>
+      <div>地址：{{ msg['address'] }}</div>
     </div>
     <!-- 名片 -->
     <div v-else-if="msg.type == 7">
@@ -24,8 +24,8 @@
     </div>
     <!-- 文件 -->
     <div v-else-if="msg.type == 8">
-      <div>{{ msg['title'] }}</div>
-      <div>{{ msg['address'] }}</div>
+      <div>文件标题：{{ msg['title'] }}</div>
+      <div>地址：{{ msg['address'] }}</div>
     </div>
     <!-- 红包 -->
     <div v-else-if="msg.type == 9">
@@ -40,19 +40,40 @@
     <!-- 合并转发 -->
     <span v-else-if="msg.type == 11"> [合并转发] </span>
     <!-- 动态表情 -->
-    <div v-else-if="msg.type == 12">[动态表情]</div>
+    <tgs-player
+      v-else-if="msg.type == 12"
+      :src="`${url}${msg['url']}`"
+      :data-src="`${url}${msg['url']}`"
+      autoplay
+      loop
+      mode="normal"
+      style="width: 120px; height: 100px"
+    ></tgs-player>
     <!-- 矢量emoji -->
-    <span v-else-if="msg.type == 13"> [矢量emoji] </span>
-    <!-- 矢量emoji -->
-    <span v-else-if="msg.type == 1014"> [截屏消息] </span>
+    <template v-else-if="msg.type == 13">
+      <tgs-player
+        v-if="msg.type == 13 && msg['url']"
+        :src="`${url}${msg['url']}`"
+        :data-src="`${url}${msg['url']}`"
+        autoplay
+        loop
+        mode="normal"
+        style="width: 120px; height: 100px"
+      ></tgs-player>
+      <span v-else> {{ msg['content'] ? msg['content'] : `[矢量emoji]` }} </span>
+    </template>
     <!-- 系统消息 -->
-    <span v-else-if="msg.type >= 1000 && msg.type <= 2000"> [系统消息] </span>
+    <template v-else-if="msg.type >= 1000 && msg.type <= 2000">
+      <span v-if="msg.type == 1014"> [截屏消息] </span>
+      <span v-else> [系统消息] </span>
+    </template>
     <!-- 未知消息类型 -->
     <span v-else> [未知消息类型] </span>
   </div>
 </template>
 
 <script lang="tsx" name="BdMsg" setup>
+import '@lottiefiles/lottie-player/dist/tgs-player';
 import { BU_DOU_CONFIG } from '@/config';
 interface IProps {
   msg: any;

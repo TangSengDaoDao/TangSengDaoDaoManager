@@ -13,6 +13,7 @@
   "dependencies": {
     "@element-plus/icons-vue": "^2.1.0",
     "@icon-park/vue-next": "^1.4.2",
+    "@lottiefiles/lottie-player": "^2.0.2",
     "@vueuse/core": "^10.1.2",
     "axios": "^1.4.0",
     "dayjs": "^1.11.9",
@@ -27,7 +28,8 @@
     "vue-color-kit": "^1.0.5",
     "vue-grid-layout": "^3.0.0-beta1",
     "vue-i18n": "^9.2.2",
-    "vue-router": "^4.2.0"
+    "vue-router": "^4.2.0",
+    "vue3-lottie": "^2.7.4"
   },
   "devDependencies": {
     "@types/sortablejs": "^1.15.1",
