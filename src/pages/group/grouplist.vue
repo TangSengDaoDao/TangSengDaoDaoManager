@@ -53,6 +53,8 @@
         />
       </div>
     </div>
+    <!-- 发消息 -->
+    <bd-send-msg v-model:value="sendValue" v-bind="sendInfo" />
   </bd-page>
 </template>
 
@@ -138,7 +140,7 @@ const column = reactive<Column.ColumnOptions[]>([
     render: (scope: any) => {
       return (
         <ElSpace>
-          <ElButton type="primary" onClick={() => aa(scope.row)}>
+          <ElButton type="primary" onClick={() => onSand(scope.row)}>
             发消息
           </ElButton>
           <ElDropdown
@@ -210,9 +212,24 @@ const onCurrentChange = (current: number) => {
   getTableList();
 };
 
-// 发消息
-const aa = (a: any) => {
-  console.log(a);
+// 发送信息
+const sendValue = ref<boolean>(false);
+const sendInfo = ref({
+  receivederChannelType: 1,
+  receiveder: '',
+  receivederName: '',
+  sender: '',
+  senderName: ''
+});
+const onSand = (item: any) => {
+  sendValue.value = true;
+  sendInfo.value = {
+    receivederChannelType: 2,
+    receiveder: item.group_no,
+    receivederName: item.name,
+    sender: item.create_name,
+    senderName: item.creator
+  };
 };
 
 // 群成员

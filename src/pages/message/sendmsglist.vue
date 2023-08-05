@@ -9,7 +9,7 @@
         <div class="flex items-center h-50px">
           <el-form inline>
             <el-form-item class="mb-0 !mr-0">
-              <el-button type="primary">发送消息</el-button>
+              <el-button type="primary" @click="onSand">发送消息</el-button>
             </el-form-item>
           </el-form>
         </div>
@@ -50,6 +50,8 @@
         />
       </div>
     </div>
+    <!-- 发送消息 -->
+    <bd-sand-all-msg v-model:value="sandValue" @ok="okSand" />
   </bd-page>
 </template>
 
@@ -114,7 +116,8 @@ const column = reactive<Column.ColumnOptions[]>([
     render: (scope: any) => {
       let img_url = '';
       if (scope.row['receiver']) {
-        img_url = `${BU_DOU_CONFIG.APP_URL}users/${scope.row['receiver']}/avatar`;
+        const msgURL = scope.row['receiver_channel_type'] == 1 ? 'users' : 'groups';
+        img_url = `${BU_DOU_CONFIG.APP_URL}${msgURL}/${scope.row['receiver']}/avatar`;
       }
       return (
         <ElAvatar src={img_url} size={54}>
@@ -201,6 +204,16 @@ const onCurrentChange = (current: number) => {
   getTableList();
 };
 
+// 发送消息
+const sandValue = ref<boolean>(false);
+const onSand = () => {
+  sandValue.value = true;
+};
+
+// 确定发送消息
+const okSand = () => {
+  getTableList();
+};
 // 初始化
 onMounted(() => {
   getTableList();

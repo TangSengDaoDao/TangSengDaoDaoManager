@@ -47,7 +47,7 @@ const onChangePassword = () => {
 const onLogoutClick = () => {
   // 1.清除 Token
   userStore.setToken('');
-  userStore.setUserInfo({ name: '您好，超管' });
+  userStore.setUserInfo({ name: '您好，超管', uid: '' });
   // 2.重定向到登陆页
   router.replace(LOGIN_URL);
 };

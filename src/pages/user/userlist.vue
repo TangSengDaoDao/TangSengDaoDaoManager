@@ -54,6 +54,8 @@
         />
       </div>
     </div>
+    <!-- 发消息 -->
+    <bd-send-msg v-model:value="sendValue" v-bind="sendInfo" />
   </bd-page>
 </template>
 
@@ -66,11 +68,13 @@ meta:
 <script lang="tsx" setup>
 import { useRouter } from 'vue-router';
 import { ElButton, ElSpace, ElAvatar, ElDropdown, ElDropdownMenu, ElDropdownItem, ElMessage, ElMessageBox } from 'element-plus';
+import { useUserStore } from '@/stores/modules/user';
 import { BU_DOU_CONFIG } from '@/config';
 // API 接口
 import { userListGet, userLiftbanPut } from '@/api/user';
 
 const router = useRouter();
+const userStore = useUserStore();
 /**
  * 表格
  */
@@ -167,7 +171,7 @@ const column = reactive<Column.ColumnOptions[]>([
     render: (scope: any) => {
       return (
         <ElSpace>
-          <ElButton type="primary" onClick={() => aa(scope.row)}>
+          <ElButton type="primary" onClick={() => onSand(scope.row)}>
             发消息
           </ElButton>
           <ElDropdown
@@ -231,8 +235,24 @@ const onCurrentChange = (current: number) => {
   getUserList();
 };
 
-const aa = (a: any) => {
-  console.log(a);
+// 发送信息
+const sendValue = ref<boolean>(false);
+const sendInfo = ref({
+  receivederChannelType: 1,
+  receiveder: '',
+  receivederName: '',
+  sender: '',
+  senderName: ''
+});
+const onSand = (item: any) => {
+  sendValue.value = true;
+  sendInfo.value = {
+    receivederChannelType: 1,
+    receiveder: item.uid,
+    receivederName: item.name,
+    sender: userStore.userInfo.uid,
+    senderName: userStore.userInfo.name
+  };
 };
 
 // 好友列表

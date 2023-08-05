@@ -10,6 +10,8 @@ declare module 'vue' {
     AddNode: typeof import('./../components/bdWorkflow/nodes/addNode.vue')['default']
     Approver: typeof import('./../components/bdWorkflow/nodes/approver.vue')['default']
     BdPage: typeof import('./../components/BdPage/index.vue')['default']
+    BdSandAllMsg: typeof import('./../components/BdSandAllMsg/index.vue')['default']
+    BdSendMsg: typeof import('./../components/BdSendMsg/index.vue')['default']
     BdStatistic: typeof import('./../components/BdStatistic/index.vue')['default']
     BdWorkflow: typeof import('./../components/bdWorkflow/index.vue')['default']
     Branch: typeof import('./../components/bdWorkflow/nodes/branch.vue')['default']

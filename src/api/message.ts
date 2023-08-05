@@ -9,6 +9,24 @@ export function messageGet(params: any) {
   });
 }
 
+// 发消息
+export function messageSendPost(data: any) {
+  return request({
+    url: '/manager/message/send',
+    method: 'post',
+    data
+  });
+}
+
+// 发全员消息
+export function messageSendAllPost(data: any) {
+  return request({
+    url: '/manager/message/sendall',
+    method: 'post',
+    data
+  });
+}
+
 // 违禁词列表
 export function messageProhibitWordsGet(params: any) {
   return request({

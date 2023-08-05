@@ -6,7 +6,7 @@ export const useUserStore = defineStore({
   id: 'budou-user',
   state: (): UserState => ({
     token: '',
-    userInfo: { name: '您好，超管' }
+    userInfo: { name: '您好，超管', uid: '' }
   }),
   getters: {},
   actions: {

@@ -32,7 +32,7 @@ axiosInstance.interceptors.response.use(
     const code = error.response.status;
     if (code == 401) {
       userStore.setToken('');
-      userStore.setUserInfo({ name: '您好，超管' });
+      userStore.setUserInfo({ name: '您好，超管', uid: '' });
       router.replace('/login');
     }
     if (code == 400) {
