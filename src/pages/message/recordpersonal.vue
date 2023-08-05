@@ -73,7 +73,7 @@ import { useRoute } from 'vue-router';
 import { ElButton, ElSpace, ElAvatar, ElMessage, ElMessageBox } from 'element-plus';
 import { BU_DOU_CONFIG } from '@/config';
 // API 接口
-import { messageRecordpersonalGet } from '@/api/message';
+import { messageRecordpersonalGet, messageDelete } from '@/api/message';
 
 const route = useRoute();
 /**
@@ -165,9 +165,13 @@ const column = reactive<Column.ColumnOptions[]>([
     render: (scope: any) => {
       return (
         <ElSpace>
-          <ElButton type="danger" onClick={() => onDel(scope.row)}>
-            删除
-          </ElButton>
+          {scope.row['is_deleted'] == 0 ? (
+            <ElButton type="danger" onClick={() => onDel(scope.row)}>
+              删除
+            </ElButton>
+          ) : (
+            ''
+          )}
         </ElSpace>
       );
     }
@@ -208,8 +212,31 @@ const onCurrentChange = (current: number) => {
   getUserList();
 };
 
+// 删除消息
+const msgDel = (data: any) => {
+  const list: any[] = [];
+  list.push({
+    message_id: data.message_id,
+    message_seq: data.message_seq
+  });
+  const formData = {
+    channel_id: route.query.uid,
+    channel_type: 1,
+    list
+  };
+  messageDelete(formData).then((res: any) => {
+    if (res.status == 200) {
+      getUserList();
+      ElMessage({
+        type: 'success',
+        message: '删除成功！'
+      });
+    }
+  });
+};
+
 // 删除
-const onDel = (_item: any) => {
+const onDel = (item: any) => {
   ElMessageBox.confirm('确定，是否删除此消息?', '提示', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
@@ -217,10 +244,7 @@ const onDel = (_item: any) => {
     type: 'warning'
   })
     .then(() => {
-      ElMessage({
-        type: 'success',
-        message: '开发中..'
-      });
+      msgDel(item);
     })
     .catch(() => {
       ElMessage({

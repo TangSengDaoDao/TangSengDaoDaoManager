@@ -18,7 +18,7 @@
     </div>
     <template #footer>
       <el-space>
-        <el-button @click="onSend">取消</el-button>
+        <el-button @click="onClose">取消</el-button>
         <el-button type="primary" :loading="loaging" @click="onSend">发送</el-button>
       </el-space>
     </template>

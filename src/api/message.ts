@@ -18,6 +18,15 @@ export function messageSendPost(data: any) {
   });
 }
 
+// 删除消息
+export function messageDelete(data: any) {
+  return request({
+    url: '/manager/message',
+    method: 'delete',
+    data
+  });
+}
+
 // 发全员消息
 export function messageSendAllPost(data: any) {
   return request({
