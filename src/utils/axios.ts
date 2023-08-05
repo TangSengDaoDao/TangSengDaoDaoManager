@@ -26,20 +26,15 @@ axiosInstance.interceptors.request.use(
 // respone 拦截器
 axiosInstance.interceptors.response.use(
   (response: AxiosResponse) => {
-    // 响应成功
-    const code = response.data.code;
-    if (code == 401 || code == 402) {
-      localStorage.token = '';
-      localStorage.userId = '';
-      localStorage.userInfo = '';
-      localStorage.taskData = '';
-      localStorage.taskNum = 0;
-      router.replace('/login');
-    }
     return Promise.resolve(response.data);
   },
   (error: any) => {
     const code = error.response.status;
+    if (code == 401) {
+      userStore.setToken('');
+      userStore.setUserInfo({ name: '您好，超管' });
+      router.replace('/login');
+    }
     if (code == 400) {
       return Promise.reject(error.response.data);
     }
