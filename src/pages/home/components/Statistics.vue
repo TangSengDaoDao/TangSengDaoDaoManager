@@ -1,7 +1,7 @@
 <template>
   <div class="el-card box-border p-12px h-full w-full relative">
     <div>{{ title }}</div>
-    <p class="num">{{ value }}</p>
+    <count-to class="num" :start-val="0" :end-val="value" :duration="3000"></count-to>
     <div v-if="icon" class="right-icon">
       <component :is="icon" size="35" />
     </div>
@@ -9,6 +9,7 @@
 </template>
 
 <script lang="ts" name="Statistics" setup>
+import { CountTo } from 'vue3-count-to';
 interface Iprops {
   title?: string;
   value?: number;
@@ -19,6 +20,9 @@ defineProps<Iprops>();
 
 <style lang="scss" scoped>
 .num {
+  display: block;
+  margin-block-start: 1em;
+  margin-block-end: 1em;
   font-size: 28px;
 }
 

@@ -59,6 +59,9 @@ dependencies:
   vue-router:
     specifier: ^4.2.0
     version: 4.2.0(vue@3.3.4)
+  vue3-count-to:
+    specifier: ^1.1.2
+    version: 1.1.2(vue@3.3.4)
   vue3-lottie:
     specifier: ^2.7.4
     version: 2.7.4(vue@3.3.4)
@@ -2479,6 +2482,11 @@ packages:
   /convert-source-map@1.9.0:
     resolution: {integrity: sha512-ASFBup0Mz1uyiIjANan1jzLQami9z1PoYSZCiiYW2FczPbenXc45FZdBZLzOT+r6+iciuEModtmCti+hjaAk0A==}
     dev: true
+
+  /core-js@3.32.0:
+    resolution: {integrity: sha512-rd4rYZNlF3WuoYuRIDEmbR/ga9CeuWX9U05umAvgrrZoHY4Z++cp/xwPQMvUpBB4Ag6J8KfD80G0zwCyaSxDww==}
+    requiresBuild: true
+    dev: false
 
   /cross-spawn@7.0.3:
     resolution: {integrity: sha512-iRDPJKUPVEND7dHPO8rkbOnPpyDygcDFtWjpeWNCgy8WP2rXcxXL8TskReQl6OrB2G7+UJrags1q15Fudc7G6w==}
@@ -5498,6 +5506,10 @@ packages:
       vue: 3.3.4
     dev: false
 
+  /vue-count-to@1.0.13:
+    resolution: {integrity: sha512-6R4OVBVNtQTlcbXu6SJ8ENR35M2/CdWt3Jmv57jOUM+1ojiFmjVGvZPH8DfHpMDSA+ITs+EW5V6qthADxeyYOQ==}
+    dev: false
+
   /vue-demi@0.13.11(vue@3.3.4):
     resolution: {integrity: sha512-IR8HoEEGM65YY3ZJYAjMlKygDQn25D5ajNFNoKh9RSDMQtlzCxtfQjdQgv9jjK+m3377SsJXY8ysq8kLCZL25A==}
     engines: {node: '>=12'}
@@ -5633,6 +5645,16 @@ packages:
       semver: 7.5.3
       typescript: 5.0.4
     dev: true
+
+  /vue3-count-to@1.1.2(vue@3.3.4):
+    resolution: {integrity: sha512-C5AvlcGfyM4XvFqPDkni94rqGd5K/+RB+B4xv/1NQx3RrdC+GvXPFzeXW5hWL/jh8ehWLm4LITyK0eMKf4iJbg==}
+    peerDependencies:
+      vue: '>= 3 < 4'
+    dependencies:
+      core-js: 3.32.0
+      vue: 3.3.4
+      vue-count-to: 1.0.13
+    dev: false
 
   /vue3-lottie@2.7.4(vue@3.3.4):
     resolution: {integrity: sha512-EJATgpaWXyqdKxaSY2Q3lK4tTkxTSssKTqBmsIEG7Yj8jT75RGF6zhsoBc/kT10X41vt2HEpjPYmEQfKt6JfOw==}

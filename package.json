@@ -29,6 +29,7 @@
     "vue-grid-layout": "^3.0.0-beta1",
     "vue-i18n": "^9.2.2",
     "vue-router": "^4.2.0",
+    "vue3-count-to": "^1.1.2",
     "vue3-lottie": "^2.7.4"
   },
   "devDependencies": {
