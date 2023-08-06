@@ -11,7 +11,7 @@
     <!-- 语音 -->
     <audio v-else-if="msg.type == 4" :src="`${url}${msg['url']}`"></audio>
     <!-- 视频 -->
-    <video v-else-if="msg.type == 5" controls :src="`${url}${msg['url']}`" class="w-25px h-200px"></video>
+    <video v-else-if="msg.type == 5" controls :src="`${url}${msg['url']}`" class="w-220px h-100px"></video>
     <!-- 位置 -->
     <div v-else-if="msg.type == 6">
       <div>位置标题：{{ msg['title'] }}</div>
