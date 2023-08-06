@@ -71,16 +71,15 @@ const handleClickMenu = (subItem: Menu.MenuOptions) => {
     border-bottom: 1px solid var(--el-border-color-light);
     .logo {
       width: 210px;
-      margin-right: 30px;
       .logo-img {
         width: 28px;
         object-fit: contain;
         margin-right: 6px;
       }
       .logo-text {
-        font-size: 21.5px;
+        font-size: 20px;
         font-weight: bold;
-        color: #dadada;
+        color: #fff;
         white-space: nowrap;
       }
     }
@@ -107,14 +106,24 @@ const handleClickMenu = (subItem: Menu.MenuOptions) => {
     }
     .tool-bar-ri {
       color: #fff;
+      .header-icon {
+        & > * {
+          color: #fff !important;
+        }
+      }
       .el-dropdown {
         color: #fff;
       }
       .toolBar-icon,
       .username {
-        color: #e5eaf3;
+        color: #e5eaf3 !important;
       }
     }
   }
+}
+
+.el-menu-item {
+  height: var(--el-menu-item-height) !important;
+  line-height: var(--el-menu-item-height) !important;
 }
 </style>

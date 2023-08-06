@@ -145,6 +145,7 @@ const changeSubMenu = (item: Menu.MenuOptions) => {
             font-size: 22px;
           }
           .title {
+            color: var(--el-text-color-primary) !important;
             margin-top: 6px;
             font-size: 14px;
           }
@@ -184,7 +185,7 @@ const changeSubMenu = (item: Menu.MenuOptions) => {
       height: 55px;
       border-bottom: 1px solid var(--el-border-color-light);
       .logo-text {
-        font-size: 24px;
+        font-size: 20px;
         font-weight: bold;
         color: var(--el-menu-text-color);
         white-space: nowrap;

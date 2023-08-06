@@ -80,7 +80,7 @@ const APP_TITLE = BU_DOU_CONFIG.APP_TITLE;
           margin-right: 6px;
         }
         .logo-text {
-          font-size: 21.5px;
+          font-size: 20px;
           font-weight: bold;
           color: var(--el-logo-text-color);
           white-space: nowrap;

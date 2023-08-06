@@ -3,7 +3,7 @@
     <div class="flex items-center cursor-pointer">
       <span class="username">{{ username }}</span>
       <div class="avatar">
-        <img src="@/assets/heder.png" alt="avatar" />
+        <img :src="headerUrl" alt="avatar" />
       </div>
     </div>
 
@@ -28,12 +28,16 @@
 <script lang="ts" setup>
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/modules/user';
-import { LOGIN_URL } from '@/config';
+import { LOGIN_URL, BU_DOU_CONFIG } from '@/config';
 
 const router = useRouter();
 const userStore = useUserStore();
 const username = computed(() => {
   return userStore.userInfo.name;
+});
+
+const headerUrl = computed(() => {
+  return `${BU_DOU_CONFIG.APP_URL}users/${userStore.userInfo.uid}/avatar`;
 });
 
 // 修改密码
@@ -58,6 +62,7 @@ const onLogoutClick = () => {
   font-size: 14px;
   height: 36px;
   line-height: 36px;
+  color: var(--el-text-color-primary) !important;
 }
 .avatar {
   width: 36px;

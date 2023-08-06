@@ -3,8 +3,8 @@
     <div class="header-icon">
       <AssemblySize id="assemblySize" />
       <Language id="language" />
-      <ThemeSetting id="themeSetting" />
       <Fullscreen id="fullscreen" />
+      <ThemeSetting id="themeSetting" />
     </div>
     <Avatar id="avatar" />
   </div>
@@ -26,6 +26,7 @@ import Avatar from './components/Avatar.vue';
     display: flex;
     align-items: center;
     & > * {
+      color: var(--el-text-color-primary) !important;
       margin-left: 20px;
     }
   }
