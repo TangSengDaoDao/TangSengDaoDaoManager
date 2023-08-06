@@ -13,7 +13,7 @@
             </el-form-item>
             <el-form-item class="mb-0 !mr-0">
               <el-button type="primary" @click="getTableList">查询</el-button>
-              <el-button type="primary">新增违禁词</el-button>
+              <el-button type="primary" @click="onAddProhitWords">新增违禁词</el-button>
             </el-form-item>
           </el-form>
         </div>
@@ -54,6 +54,8 @@
         />
       </div>
     </div>
+    <!-- 新增违禁词 -->
+    <bd-prohit-words v-model:value="prohitWordsValue" @ok="okSand" />
   </bd-page>
 </template>
 
@@ -64,9 +66,9 @@ meta:
 </route>
 
 <script lang="tsx" setup>
-import { ElButton, ElSpace } from 'element-plus';
+import { ElButton, ElSpace, ElText, ElMessage, ElMessageBox } from 'element-plus';
 // API 接口
-import { messageProhibitWordsGet } from '@/api/message';
+import { messageProhibitWordsGet, messageProhibitWordsDelete } from '@/api/message';
 /**
  * 表格
  */
@@ -79,8 +81,9 @@ const column = reactive<Column.ColumnOptions[]>([
     prop: 'is_deleted',
     label: '是否删除',
     width: 160,
-    formatter(row: any) {
-      return row['is_deleted'] === 1 ? '是' : '否';
+    render: (scope: any) => {
+      const type = scope.row['is_deleted'] === 1 ? 'danger' : '';
+      return <ElText type={type}> {scope.row['is_deleted'] === 1 ? '是' : '否'}</ElText>;
     }
   },
   {
@@ -95,10 +98,11 @@ const column = reactive<Column.ColumnOptions[]>([
     fixed: 'right',
     width: 120,
     render: (scope: any) => {
+      const type = scope.row['is_deleted'] === 0 ? 'danger' : 'warning';
       return (
         <ElSpace>
-          <ElButton type="primary" onClick={() => aa(scope.row)}>
-            删除
+          <ElButton type={type} onClick={() => onDel(scope.row)}>
+            {scope.row['is_deleted'] == 0 ? '删除' : '恢复'}
           </ElButton>
         </ElSpace>
       );
@@ -138,8 +142,54 @@ const onCurrentChange = (current: number) => {
   getTableList();
 };
 
-const aa = (a: any) => {
-  console.log(a);
+// 新增违禁词
+const prohitWordsValue = ref<boolean>(false);
+const onAddProhitWords = () => {
+  prohitWordsValue.value = true;
+};
+
+// 确定新增违禁词
+const okSand = () => {
+  getTableList();
+};
+
+// 删除违禁词
+const prohitWordsDel = (item: any) => {
+  console.log(item);
+  const formData = {
+    is_deleted: item.is_deleted == 1 ? 0 : 1,
+    id: item.id
+  };
+  const msg = item.is_deleted === 0 ? '删除违禁词成功!' : '恢复违禁词成功!';
+  messageProhibitWordsDelete(formData).then((res: any) => {
+    if (res.status == 200) {
+      getTableList();
+      ElMessage({
+        type: 'success',
+        message: msg
+      });
+    }
+  });
+};
+// 确定删除违禁词
+const onDel = (item: any) => {
+  const title = item.is_deleted === 0 ? '删除违禁词' : '恢复违禁词';
+  const content = item.is_deleted === 0 ? `确定要删除违禁词[${item.content}]吗` : `确定要恢复违禁词[${item.content}]吗`;
+  ElMessageBox.confirm(content, title, {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    closeOnClickModal: false,
+    type: 'warning'
+  })
+    .then(() => {
+      prohitWordsDel(item);
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: '取消成功！'
+      });
+    });
 };
 
 // 初始化

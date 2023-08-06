@@ -44,6 +44,22 @@ export function messageProhibitWordsGet(params: any) {
     params
   });
 }
+// 新增违禁词
+export function messageProhibitWordsPost(params: any) {
+  return request({
+    url: '/manager/message/prohibit_words',
+    method: 'post',
+    params
+  });
+}
+// 删除违禁词
+export function messageProhibitWordsDelete(params: any) {
+  return request({
+    url: '/manager/message/prohibit_words',
+    method: 'delete',
+    params
+  });
+}
 
 // 单聊天消息
 export function messageRecordpersonalGet(params: any) {
