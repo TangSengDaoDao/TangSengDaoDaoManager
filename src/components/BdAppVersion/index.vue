@@ -20,7 +20,7 @@
       <el-form-item label="升级操作">
         <el-radio-group v-model="formData.is_force">
           <el-radio :label="1">强制更新</el-radio>
-          <el-radio :label="false">非强制更新</el-radio>
+          <el-radio :label="0">非强制更新</el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item label="安装包">
@@ -73,7 +73,7 @@ const loaging = ref<boolean>(false);
 const formData = reactive({
   app_version: '',
   os: 'android',
-  is_force: false,
+  is_force: 0,
   update_desc: '',
   download_url: ''
 });

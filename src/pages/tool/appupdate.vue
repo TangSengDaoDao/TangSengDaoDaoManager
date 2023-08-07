@@ -82,7 +82,10 @@ const column = reactive<Column.ColumnOptions[]>([
   {
     prop: 'is_force',
     label: '是否强制更新',
-    width: 220
+    width: 220,
+    formatter(row: any) {
+      return row.is_force === 1 ? '是' : '否';
+    }
   },
   {
     prop: 'update_desc',
