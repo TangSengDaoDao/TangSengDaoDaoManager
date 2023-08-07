@@ -27,6 +27,15 @@ export function groupGroupmembersGet(params: any, groupNo: string) {
   });
 }
 
+// 移除成员
+export function groupGroupmembersDelete(data: any, groupNo: string) {
+  return request({
+    url: `/manager/groups/${groupNo}/members`,
+    method: 'delete',
+    data
+  });
+}
+
 // 黑名单列表
 export function groupBlacklistGet(params: any, groupNo: string) {
   return request({
