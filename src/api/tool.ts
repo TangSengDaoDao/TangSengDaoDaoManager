@@ -9,6 +9,15 @@ export function commonAppversionListGet(params: any) {
   });
 }
 
+// 新增App版本
+export function commonAppversionPost(data: any) {
+  return request({
+    url: '/common/appversion',
+    method: 'post',
+    data
+  });
+}
+
 // 系统机器人菜单列表
 export function robotMenusGet(params: any) {
   return request({
