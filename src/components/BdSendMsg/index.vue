@@ -12,11 +12,11 @@
   >
     <div class="mb-20px">
       <el-divider content-position="left">接受者信息</el-divider>
-      <div>接受者ID：{{ receivederName }}</div>
-      <div>接受者名称：{{ receiveder }}</div>
+      <div>接受者ID：{{ receiveder }}</div>
+      <div>接受者名称：{{ receivederName }}</div>
       <el-divider content-position="left">发送者信息</el-divider>
       <div>发送者ID：{{ sender }}</div>
-      <div>发送者名字：{{ sender }}</div>
+      <div>发送者名字：{{ senderName }}</div>
     </div>
     <div>
       <el-input v-model="content" :rows="6" type="textarea" placeholder="请输入内容" />
