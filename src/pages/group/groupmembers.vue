@@ -56,6 +56,8 @@
         />
       </div>
     </div>
+    <!-- 发消息 -->
+    <bd-send-msg v-model:value="sendValue" v-bind="sendInfo" />
   </bd-page>
 </template>
 
@@ -70,7 +72,7 @@ import { useRoute } from 'vue-router';
 import { ElButton, ElSpace, ElText, ElAvatar, ElMessage, ElMessageBox } from 'element-plus';
 import { BU_DOU_CONFIG } from '@/config';
 // API 接口
-import { groupGroupmembersGet } from '@/api/group';
+import { groupGroupmembersGet, groupGroupmembersDelete } from '@/api/group';
 
 const route = useRoute();
 /**
@@ -118,7 +120,7 @@ const column = reactive<Column.ColumnOptions[]>([
         text = '群主';
         type = 'success';
       }
-      // 群主
+      // 管理员
       if (scope?.row['role'] == 2) {
         text = '管理员';
         type = 'warning';
@@ -138,16 +140,20 @@ const column = reactive<Column.ColumnOptions[]>([
   {
     prop: 'operation',
     label: '操作',
-    align: 'center',
+    align: 'left',
     fixed: 'right',
     width: 180,
     render: (scope: any) => {
       return (
         <ElSpace>
-          <ElButton type="primary">发消息</ElButton>
-          <ElButton type="danger" onClick={() => onDel(scope.row)}>
-            删除
+          <ElButton type="primary" onClick={() => onSand(scope.row)}>
+            发消息
           </ElButton>
+          {scope?.row['role'] != 1 && (
+            <ElButton type="danger" onClick={() => onDel(scope.row)}>
+              移除
+            </ElButton>
+          )}
         </ElSpace>
       );
     }
@@ -186,19 +192,59 @@ const onCurrentChange = (current: number) => {
   getUserList();
 };
 
+// 发送信息
+const sendValue = ref<boolean>(false);
+const sendInfo = ref({
+  receivederChannelType: 1,
+  receiveder: '',
+  receivederName: '',
+  sender: '',
+  senderName: ''
+});
+const onSand = (item: any) => {
+  sendValue.value = true;
+  sendInfo.value = {
+    receivederChannelType: 2,
+    receiveder: route.query.groupNo as string,
+    receivederName: route.query.name as string,
+    sender: item.uid,
+    senderName: item.name
+  };
+};
+
+const onGroupGroupmembersDelete = (item: any) => {
+  const uid: string[] = [];
+  uid.push(item.uid);
+  const formData = {
+    uid
+  };
+  groupGroupmembersDelete(formData, route.query.groupNo as string)
+    .then((res: any) => {
+      if (res.status == 200) {
+        getUserList();
+        ElMessage({
+          type: 'success',
+          message: '移除成功！'
+        });
+      }
+    })
+    .catch(err => {
+      if (err.status == 400) {
+        ElMessage.error(err.msg);
+      }
+    });
+};
+
 // 删除
-const onDel = (_item: any) => {
-  ElMessageBox.confirm('确定，是否删除此成员?', '提示', {
+const onDel = (item: any) => {
+  ElMessageBox.confirm('确定，是否删除此移除?', '提示', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     closeOnClickModal: false,
     type: 'warning'
   })
     .then(() => {
-      ElMessage({
-        type: 'success',
-        message: '开发中..'
-      });
+      onGroupGroupmembersDelete(item);
     })
     .catch(() => {
       ElMessage({

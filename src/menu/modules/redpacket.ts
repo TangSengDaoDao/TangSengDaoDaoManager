@@ -6,7 +6,7 @@ const home: Menu.MenuOptions = {
     icon: 'i-bd-red-envelopes',
     isAffix: false,
     isFull: false,
-    isHide: false,
+    isHide: true,
     isKeepAlive: true,
     isLink: '',
     index: 5,

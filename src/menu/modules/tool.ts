@@ -35,7 +35,7 @@ const home: Menu.MenuOptions = {
         icon: 'i-bd-application-two',
         isAffix: false,
         isFull: false,
-        isHide: false,
+        isHide: true,
         isKeepAlive: true,
         isLink: '',
         title: '系统机器人菜单列表'

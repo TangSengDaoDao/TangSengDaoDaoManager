@@ -9,7 +9,7 @@
         <div class="flex items-center h-50px">
           <el-form inline>
             <el-form-item class="mb-0 !mr-0">
-              <el-button type="primary">新增版本</el-button>
+              <el-button type="primary" @click="onAppVersionAdd">新增版本</el-button>
             </el-form-item>
           </el-form>
         </div>
@@ -50,6 +50,8 @@
         />
       </div>
     </div>
+    <!-- 新增版本 -->
+    <bd-app-version v-model:value="appVersionAddValue" />
   </bd-page>
 </template>
 
@@ -80,7 +82,10 @@ const column = reactive<Column.ColumnOptions[]>([
   {
     prop: 'is_force',
     label: '是否强制更新',
-    width: 220
+    width: 220,
+    formatter(row: any) {
+      return row.is_force === 1 ? '是' : '否';
+    }
   },
   {
     prop: 'update_desc',
@@ -123,7 +128,11 @@ const onCurrentChange = (current: number) => {
   queryFrom.page_index = current;
   getTableList();
 };
-
+// 新增版本
+const appVersionAddValue = ref<boolean>(false);
+const onAppVersionAdd = () => {
+  appVersionAddValue.value = true;
+};
 // 初始化
 onMounted(() => {
   getTableList();
