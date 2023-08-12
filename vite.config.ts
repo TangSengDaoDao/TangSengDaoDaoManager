@@ -14,7 +14,6 @@ import Pages from 'vite-plugin-pages';
 import compression from 'vite-plugin-compression';
 
 const getPlugins = (_command?: string) => {
-  console.log(process.env.IS_CONFIG);
   return [
     AutoImport({
       include: [/\.[tj]sx?$/, /\.vue\?vue/, /\.md$/],
