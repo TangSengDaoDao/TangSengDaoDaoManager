@@ -22,6 +22,8 @@ import '@icon-park/vue-next/styles/index.css';
 import '@/styles/index.scss';
 import 'uno.css';
 
+import '@/utils/system-copyright';
+
 const app = createApp(App);
 install(app, 'i-bd');
 // register the element Icons component
