@@ -13,7 +13,8 @@ import Layouts from 'vite-plugin-vue-meta-layouts';
 import Pages from 'vite-plugin-pages';
 import compression from 'vite-plugin-compression';
 
-const getPlugins = (command: string) => {
+const getPlugins = (_command?: string) => {
+  console.log(process.env.IS_CONFIG);
   return [
     AutoImport({
       include: [/\.[tj]sx?$/, /\.vue\?vue/, /\.md$/],
@@ -39,7 +40,7 @@ const getPlugins = (command: string) => {
       inject: {
         data: {
           title: '唐僧叨叨后台管理',
-          injectScript: command === 'build' ? `<script src="/tsdd-config.js"></script>` : null
+          injectScript: process.env.IS_CONFIG ? `<script src="/tsdd-config.js"></script>` : null
         }
       }
     }),

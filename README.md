@@ -1,6 +1,9 @@
 # tsdd-control
 * NODE_ENV node环境变量
 * APP_ENV 应用环境变量
+  - dev 开发环境
+  - pord 生产环境
+* IS_CONFIG 是否添加配置文件
 
 ## 安装
 
@@ -18,6 +21,12 @@ pnpm dev
 
 ``` sh
 pnpm build
+```
+
+## 配置文件编译
+
+``` sh
+pnpm build:config
 ```
 
 ## 本地预览
