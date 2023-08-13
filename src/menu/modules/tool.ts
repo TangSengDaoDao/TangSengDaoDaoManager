@@ -9,7 +9,7 @@ const home: Menu.MenuOptions = {
     isHide: false,
     isKeepAlive: true,
     isLink: '',
-    index: 7,
+    index: 8,
     title: '工具'
   },
   children: [
