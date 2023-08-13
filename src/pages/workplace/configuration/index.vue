@@ -1,0 +1,54 @@
+<template>
+  <bd-page class="flex-col">
+    <div class="flex-1 el-card border-none flex-col box-border overflow-hidden">
+      <el-tabs v-model="activeName" class="bd-tabs" @tab-change="onTabChange">
+        <el-tab-pane v-for="item in tabsData" :key="item.name" :label="item.label" :name="item.name">
+          <component :is="item.render" />
+        </el-tab-pane>
+      </el-tabs>
+    </div>
+  </bd-page>
+</template>
+
+<route lang="yaml">
+meta:
+  title: 工作台设置
+  isAffix: false
+</route>
+
+<script lang="tsx" setup>
+import type { TabPaneName } from 'element-plus';
+import Banner from './components/Banner.vue';
+import Recommend from './components/Recommend.vue';
+import CustomGroup from './components/CustomGroup.vue';
+
+const activeName = ref('banner');
+
+const tabsData = reactive([
+  {
+    name: 'banner',
+    label: '轮播',
+    render: () => {
+      return <Banner />;
+    }
+  },
+  {
+    name: 'recommend',
+    label: '管理员推荐',
+    render: () => {
+      return <Recommend />;
+    }
+  },
+  {
+    name: 'custom-group',
+    label: '自定义分组',
+    render: () => {
+      return <CustomGroup />;
+    }
+  }
+]);
+
+const onTabChange = (tab: TabPaneName) => {
+  console.log(tab);
+};
+</script>
