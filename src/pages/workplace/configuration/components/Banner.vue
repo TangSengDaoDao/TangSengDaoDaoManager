@@ -9,7 +9,7 @@
               <el-input v-model="queryFrom.keyword" placeholder="轮播名称" clearable />
             </el-form-item>
             <el-form-item class="mb-0 !mr-0">
-              <el-button type="primary">新增轮播</el-button>
+              <el-button type="primary" @click="onBannerDialogValue">新增轮播</el-button>
             </el-form-item>
           </el-form>
         </div>
@@ -51,32 +51,38 @@
         />
       </div>
     </div>
+    <!-- 轮播 -->
+    <BannerDialog v-model:value="bannerDialogValue" />
   </bd-page>
 </template>
 
 <script lang="tsx" name="Banner" setup>
 import { ElButton, ElSpace } from 'element-plus';
+import BannerDialog from './BannerDialog.vue';
+
+// API接口
+import { bannerGet } from '@/api/workplace/banner';
 /**
  * 表格
  */
 const column = reactive<Column.ColumnOptions[]>([
   {
-    prop: 'name',
+    prop: 'title',
     label: '名称'
   },
   {
-    prop: 'no',
-    label: '编码'
+    prop: 'route',
+    label: '地址'
   },
   {
     prop: 'status',
-    label: '状态',
+    label: '打开方式',
     formatter(row: any) {
-      return row.status === 1 ? '开启' : '关闭';
+      return row.status === 0 ? '网页' : '原生';
     }
   },
   {
-    prop: 'des',
+    prop: 'description',
     label: '描述'
   },
   {
@@ -86,7 +92,8 @@ const column = reactive<Column.ColumnOptions[]>([
     render: (_scope: any) => {
       return (
         <ElSpace>
-          <ElButton type="primary">配置</ElButton>
+          <ElButton type="primary">编辑</ElButton>
+          <ElButton>删除</ElButton>
         </ElSpace>
       );
     }
@@ -105,7 +112,11 @@ const queryFrom = reactive({
 });
 
 // 搜索
-const getTableList = () => {};
+const getTableList = () => {
+  bannerGet(queryFrom).then((res: any) => {
+    tableData.value = res;
+  });
+};
 
 // 分页page-size
 const onSizeChange = (size: number) => {
@@ -119,7 +130,15 @@ const onCurrentChange = (current: number) => {
   getTableList();
 };
 
-// 新增版本
+// 新增轮播
+const bannerDialogValue = ref(false);
+const onBannerDialogValue = () => {
+  bannerDialogValue.value = true;
+};
+
+onMounted(() => {
+  getTableList();
+});
 </script>
 
 <style lang="scss" scoped>

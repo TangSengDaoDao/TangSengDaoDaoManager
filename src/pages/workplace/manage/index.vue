@@ -53,9 +53,9 @@
         />
       </div>
     </div>
+    <!-- 应用 -->
+    <Apply v-model:value="applyAddValue" />
   </bd-page>
-  <!-- 应用 -->
-  <Apply v-model:value="applyAddValue" />
 </template>
 
 <route lang="yaml">

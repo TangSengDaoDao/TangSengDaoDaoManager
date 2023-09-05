@@ -1,9 +1,9 @@
 <template>
   <bd-page class="flex-col">
     <div class="flex-1 el-card border-none flex-col box-border overflow-hidden">
-      <el-tabs v-model="activeName" class="bd-tabs" @tab-change="onTabChange">
+      <el-tabs v-model="activeName" class="bd-tabs">
         <el-tab-pane v-for="item in tabsData" :key="item.name" :label="item.label" :name="item.name">
-          <component :is="item.render" />
+          <component :is="item.render" v-if="item.name === activeName" />
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -17,7 +17,6 @@ meta:
 </route>
 
 <script lang="tsx" setup>
-import type { TabPaneName } from 'element-plus';
 import Banner from './components/Banner.vue';
 import Recommend from './components/Recommend.vue';
 import CustomGroup from './components/CustomGroup.vue';
@@ -47,8 +46,4 @@ const tabsData = reactive([
     }
   }
 ]);
-
-const onTabChange = (tab: TabPaneName) => {
-  console.log(tab);
-};
 </script>
