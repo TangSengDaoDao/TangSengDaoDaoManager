@@ -65,43 +65,61 @@ meta:
 </route>
 
 <script lang="tsx" setup>
-import { ElButton, ElSpace } from 'element-plus';
+import { ElButton, ElSpace, ElImage } from 'element-plus';
 import Apply from './components/Apply.vue';
+import { BU_DOU_CONFIG } from '@/config';
+
+// API接口
+import { appGet } from '@/api/workplace/app';
 /**
  * 表格
  */
 const column = reactive<Column.ColumnOptions[]>([
   {
     prop: 'icon',
-    label: '应用LOGO'
+    label: '应用LOGO',
+    align: 'center',
+    width: 100,
+    render: (scope: any) => {
+      let img_url = '';
+      if (scope.row['icon']) {
+        img_url = `${BU_DOU_CONFIG.APP_URL}${scope.row.icon}`;
+      }
+      return <ElImage src={img_url} fit={'scale-down'} class={'w-60px h-60px'} />;
+    }
   },
   {
     prop: 'name',
-    label: '应用名称'
+    label: '应用名称',
+    width: 160
   },
   {
-    prop: 'no',
-    label: '应用APP ID'
+    prop: 'app_id',
+    label: '应用APP ID',
+    width: 290
   },
   {
     prop: 'status',
     label: '应用状态',
+    width: 100,
     formatter(row: any) {
       return row.status === 1 ? '开启' : '关闭';
     }
   },
   {
-    prop: 'des',
+    prop: 'description',
     label: '应用描述'
   },
   {
     prop: 'operation',
     label: '操作',
+    width: 150,
     align: 'center',
     render: (_scope: any) => {
       return (
         <ElSpace>
-          <ElButton type="primary">配置</ElButton>
+          <ElButton type="primary">编辑</ElButton>
+          <ElButton>删除</ElButton>
         </ElSpace>
       );
     }
@@ -120,7 +138,11 @@ const queryFrom = reactive({
 });
 
 // 搜索
-const getTableList = () => {};
+const getTableList = () => {
+  appGet(queryFrom).then((res: any) => {
+    tableData.value = res;
+  });
+};
 
 // 分页page-size
 const onSizeChange = (size: number) => {
@@ -139,6 +161,10 @@ const applyAddValue = ref<boolean>(false);
 const onAppVersionAdd = () => {
   applyAddValue.value = true;
 };
+
+onMounted(() => {
+  getTableList();
+});
 </script>
 
 <style lang="scss" scoped>

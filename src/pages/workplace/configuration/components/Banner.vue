@@ -57,11 +57,12 @@
 </template>
 
 <script lang="tsx" name="Banner" setup>
-import { ElButton, ElSpace } from 'element-plus';
+import { ElButton, ElSpace, ElImage, ElMessageBox, ElMessage } from 'element-plus';
 import BannerDialog from './BannerDialog.vue';
+import { BU_DOU_CONFIG } from '@/config';
 
 // API接口
-import { bannerGet } from '@/api/workplace/banner';
+import { bannerGet, bannerDelete } from '@/api/workplace/banner';
 /**
  * 表格
  */
@@ -69,6 +70,17 @@ const column = reactive<Column.ColumnOptions[]>([
   {
     prop: 'title',
     label: '名称'
+  },
+  {
+    prop: 'cover',
+    label: '图片',
+    render: (scope: any) => {
+      let img_url = '';
+      if (scope.row['cover']) {
+        img_url = `${BU_DOU_CONFIG.APP_URL}${scope.row.cover}`;
+      }
+      return <ElImage src={img_url} fit={'scale-down'} class={'w-120px h-60px'} />;
+    }
   },
   {
     prop: 'route',
@@ -86,14 +98,19 @@ const column = reactive<Column.ColumnOptions[]>([
     label: '描述'
   },
   {
+    prop: 'created_at',
+    label: '创建时间',
+    width: 180
+  },
+  {
     prop: 'operation',
     label: '操作',
     align: 'center',
-    render: (_scope: any) => {
+    render: (scope: any) => {
       return (
         <ElSpace>
           <ElButton type="primary">编辑</ElButton>
-          <ElButton>删除</ElButton>
+          <ElButton onClick={() => onDelBanner(scope.row)}>删除</ElButton>
         </ElSpace>
       );
     }
@@ -134,6 +151,40 @@ const onCurrentChange = (current: number) => {
 const bannerDialogValue = ref(false);
 const onBannerDialogValue = () => {
   bannerDialogValue.value = true;
+};
+
+// 删除轮播
+const onDelBanner = (item: any) => {
+  ElMessageBox.confirm(`确定要对该轮播吗?`, `操作提示`, {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    closeOnClickModal: false,
+    type: 'warning'
+  })
+    .then(() => {
+      const fromLiftban = {
+        banner_no: item.banner_no
+      };
+      bannerDelete(fromLiftban)
+        .then((_res: any) => {
+          getTableList();
+          ElMessage({
+            type: 'success',
+            message: `轮播群组成功！`
+          });
+        })
+        .catch(err => {
+          if (err.status == 400) {
+            ElMessage.error(err.msg);
+          }
+        });
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: '取消成功！'
+      });
+    });
 };
 
 onMounted(() => {

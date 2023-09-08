@@ -97,7 +97,7 @@ watch(
     props.value = n;
   }
 );
-
+// 上传图片
 const headers = {
   token: userStore.token
 };
