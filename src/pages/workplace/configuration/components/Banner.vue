@@ -5,9 +5,6 @@
         <div class="bd-title-left"></div>
         <div class="flex items-center h-50px">
           <el-form inline>
-            <el-form-item class="mb-0 !mr-16px">
-              <el-input v-model="queryFrom.keyword" placeholder="轮播名称" clearable />
-            </el-form-item>
             <el-form-item class="mb-0 !mr-0">
               <el-button type="primary" @click="onBannerDialogValue">新增轮播</el-button>
             </el-form-item>
@@ -30,29 +27,21 @@
               <template v-else-if="item.formatter">
                 <slot :name="item.prop" :row="scope.row">{{ item.formatter(scope.row) }}</slot>
               </template>
-              <template v-else>
-                <slot :name="item.prop" :row="scope.row">{{ scope.row[item.prop] }}</slot>
+              <template v-else-if="item.prop">
+                <slot :name="item.prop" :row="scope.row">{{ scope.row[item.prop!] }}</slot>
               </template>
             </template>
           </el-table-column>
         </el-table>
       </div>
-      <div class="bd-card-footer pl-12px pr-12px mb-12px flex items-center justify-between">
-        <div></div>
-        <el-pagination
-          v-model:current-page="queryFrom.page_index"
-          v-model:page-size="queryFrom.page_size"
-          :page-sizes="[15, 20, 30, 50, 100]"
-          :background="true"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="total"
-          @size-change="onSizeChange"
-          @current-change="onCurrentChange"
-        />
-      </div>
     </div>
     <!-- 轮播 -->
-    <BannerDialog v-model:value="bannerDialogValue" />
+    <BannerDialog
+      v-model:value="bannerDialogValue"
+      :title="bannerDialogTitle"
+      :type="bannerDialogType"
+      :data="bannerDialogData"
+    />
   </bd-page>
 </template>
 
@@ -63,6 +52,7 @@ import { BU_DOU_CONFIG } from '@/config';
 
 // API接口
 import { bannerGet, bannerDelete } from '@/api/workplace/banner';
+
 /**
  * 表格
  */
@@ -105,12 +95,17 @@ const column = reactive<Column.ColumnOptions[]>([
   {
     prop: 'operation',
     label: '操作',
+    width: 150,
     align: 'center',
     render: (scope: any) => {
       return (
         <ElSpace>
-          <ElButton type="primary">编辑</ElButton>
-          <ElButton onClick={() => onDelBanner(scope.row)}>删除</ElButton>
+          <ElButton type="primary" onClick={() => onBannerEidt(scope.row)}>
+            编辑
+          </ElButton>
+          <ElButton type="danger" onClick={() => onDelBanner(scope.row)}>
+            删除
+          </ElButton>
         </ElSpace>
       );
     }
@@ -118,8 +113,6 @@ const column = reactive<Column.ColumnOptions[]>([
 ]);
 const tableData = ref<any[]>([]);
 const loadTable = ref<boolean>(false);
-// 分页
-const total = ref(0);
 
 // 查询
 const queryFrom = reactive({
@@ -135,21 +128,23 @@ const getTableList = () => {
   });
 };
 
-// 分页page-size
-const onSizeChange = (size: number) => {
-  queryFrom.page_size = size;
-  getTableList();
-};
-
-// 分页page-size
-const onCurrentChange = (current: number) => {
-  queryFrom.page_index = current;
-  getTableList();
-};
-
 // 新增轮播
 const bannerDialogValue = ref(false);
+const bannerDialogTitle = ref('新增轮播');
+const bannerDialogType = ref<'add' | 'edit'>('add');
 const onBannerDialogValue = () => {
+  bannerDialogTitle.value = `新增轮播`;
+  bannerDialogType.value = 'add';
+  bannerDialogValue.value = true;
+};
+
+// 编辑轮播
+
+const bannerDialogData = ref({});
+const onBannerEidt = (item: any) => {
+  bannerDialogTitle.value = `编辑${item.title}`;
+  bannerDialogData.value = item;
+  bannerDialogType.value = 'edit';
   bannerDialogValue.value = true;
 };
 
@@ -170,7 +165,7 @@ const onDelBanner = (item: any) => {
           getTableList();
           ElMessage({
             type: 'success',
-            message: `轮播群组成功！`
+            message: `轮播删除成功！`
           });
         })
         .catch(err => {

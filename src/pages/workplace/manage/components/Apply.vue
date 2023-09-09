@@ -187,7 +187,7 @@ const editApp = () => {
     .then((res: any) => {
       loaging.value = false;
       if (res.status == 200) {
-        ElMessage.success('新增成功！');
+        ElMessage.success('编辑成功！');
         content.value = '';
         onClose();
         emits('ok', true);

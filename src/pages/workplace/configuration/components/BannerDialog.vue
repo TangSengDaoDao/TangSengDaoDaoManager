@@ -7,7 +7,7 @@
     :close-on-press-escape="false"
     :draggable="true"
     :z-index="99"
-    title="新增轮播"
+    :title="title"
     @close="onClose"
   >
     <el-form :model="formData" label-width="96px">
@@ -50,7 +50,7 @@
     <template #footer>
       <el-space>
         <el-button @click="onClose">取消</el-button>
-        <el-button type="primary" :loading="loaging" @click="onSend">保存</el-button>
+        <el-button type="primary" :loading="loaging" @click="onConfirm">保存</el-button>
       </el-space>
     </template>
   </el-dialog>
@@ -62,23 +62,28 @@ import { ElMessage } from 'element-plus';
 import { Plus } from '@element-plus/icons-vue';
 import { useUserStore } from '@/stores/modules/user';
 // API 接口
-import { bannerPost } from '@/api/workplace/banner';
+import { bannerPost, bannerPut } from '@/api/workplace/banner';
 import { feileGet } from '@/api/file';
 
 import { BU_DOU_CONFIG } from '@/config';
 
 interface IProps {
   value: boolean;
+  title: string;
+  type: 'add' | 'edit';
+  data: object;
 }
 
 const userStore = useUserStore();
 const props = withDefaults(defineProps<IProps>(), {
-  value: false
+  value: false,
+  title: '新增轮播',
+  type: 'add'
 });
 
 const content = ref('');
 const loaging = ref<boolean>(false);
-const formData = reactive({
+const formData = ref({
   cover: '',
   title: '',
   description: '',
@@ -94,7 +99,18 @@ const emits = defineEmits<{
 watch(
   () => props.value,
   (n, _o) => {
-    props.value = n;
+    if (n && props.type === 'edit') {
+      formData.value = props.data as any;
+    }
+    if (!n) {
+      formData.value = {
+        cover: '',
+        title: '',
+        description: '',
+        route: '',
+        jump_type: 0
+      };
+    }
   }
 );
 // 上传图片
@@ -116,17 +132,17 @@ const beforeAvatarUpload = async (rawFile: any) => {
   }
 };
 const handleAvatarSuccess = (response: any, _uploadFile: any) => {
-  console.log(response);
-  formData.cover = response.path;
+  formData.value.cover = response.path;
 };
 // 取消
 const onClose = () => {
   emits('update:value', false);
 };
-// 发送
-const onSend = () => {
+
+// 新增轮播
+const addBanner = () => {
   loaging.value = true;
-  bannerPost(formData)
+  bannerPost(formData.value)
     .then((res: any) => {
       loaging.value = false;
       if (res.status == 200) {
@@ -142,6 +158,36 @@ const onSend = () => {
         ElMessage.error(err.msg);
       }
     });
+};
+
+// 编辑轮播
+const editBanner = () => {
+  loaging.value = true;
+  bannerPut(formData.value)
+    .then((res: any) => {
+      loaging.value = false;
+      if (res.status == 200) {
+        ElMessage.success('编辑成功！');
+        content.value = '';
+        onClose();
+        emits('ok', true);
+      }
+    })
+    .catch(err => {
+      loaging.value = false;
+      if (err.status == 400) {
+        ElMessage.error(err.msg);
+      }
+    });
+};
+// 发送
+const onConfirm = () => {
+  if (props.type === 'add') {
+    addBanner();
+  }
+  if (props.type === 'edit') {
+    editBanner();
+  }
 };
 </script>
 

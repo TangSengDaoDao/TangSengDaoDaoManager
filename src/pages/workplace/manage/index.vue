@@ -10,6 +10,9 @@
             <el-form-item class="mb-0 !mr-16px">
               <el-input v-model="queryFrom.keyword" placeholder="应用名称/APP ID" clearable />
             </el-form-item>
+            <el-form-item class="mb-0 !mr-16px">
+              <el-button type="primary" @click="getTableList">查询</el-button>
+            </el-form-item>
             <el-form-item class="mb-0 !mr-0">
               <el-button type="primary" @click="onAppVersionAdd">新增应用</el-button>
             </el-form-item>
@@ -65,12 +68,12 @@ meta:
 </route>
 
 <script lang="tsx" setup>
-import { ElButton, ElSpace, ElImage } from 'element-plus';
+import { ElButton, ElMessageBox, ElMessage, ElSpace, ElImage } from 'element-plus';
 import Apply from './components/Apply.vue';
 import { BU_DOU_CONFIG } from '@/config';
 
 // API接口
-import { appGet } from '@/api/workplace/app';
+import { appGet, appDelete } from '@/api/workplace/app';
 /**
  * 新增应用
  */
@@ -139,7 +142,9 @@ const column = reactive<Column.ColumnOptions[]>([
           <ElButton type="primary" onClick={() => oApplyEidt(scope.row)}>
             编辑
           </ElButton>
-          <ElButton>删除</ElButton>
+          <ElButton type="danger" onClick={() => onDelApply(scope.row)}>
+            删除
+          </ElButton>
         </ElSpace>
       );
     }
@@ -171,6 +176,40 @@ const oApplyEidt = (item: any) => {
   applyData.value = item;
   applyType.value = 'edit';
   applyAddValue.value = true;
+};
+
+// 删除应用
+const onDelApply = (item: any) => {
+  ElMessageBox.confirm(`确定要对该应用吗?`, `操作提示`, {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    closeOnClickModal: false,
+    type: 'warning'
+  })
+    .then(() => {
+      const fromLiftban = {
+        banner_no: item.banner_no
+      };
+      appDelete(fromLiftban)
+        .then((_res: any) => {
+          getTableList();
+          ElMessage({
+            type: 'success',
+            message: `应用删除成功！`
+          });
+        })
+        .catch(err => {
+          if (err.status == 400) {
+            ElMessage.error(err.msg);
+          }
+        });
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: '取消成功！'
+      });
+    });
 };
 
 // 分页page-size
