@@ -35,3 +35,12 @@ export function categoryAppPost(data: any) {
     data
   });
 }
+
+// 分类删除应用
+export function categoryAppDelete(params: any) {
+  return request({
+    url: '/manager/workplace/category/app',
+    method: 'delete',
+    params
+  });
+}

@@ -75,13 +75,13 @@
 </template>
 
 <script lang="tsx" name="CustomGroup" setup>
-import { ElButton, ElSpace, ElImage } from 'element-plus';
+import { ElButton, ElSpace, ElImage, ElMessageBox, ElMessage } from 'element-plus';
 import CategoryDialog from './CategoryDialog.vue';
 import AppDialog from './AppDialog.vue';
 import { BU_DOU_CONFIG } from '@/config';
 
 // API接口
-import { categoryGet, categoryAppGet } from '@/api/workplace/category';
+import { categoryGet, categoryAppGet, categoryAppDelete } from '@/api/workplace/category';
 
 interface Tree {
   category_no: string;
@@ -173,11 +173,13 @@ const column = reactive<Column.ColumnOptions[]>([
     prop: 'operation',
     label: '操作',
     align: 'center',
-    width: 120,
-    render: (_scope: any) => {
+    width: 84,
+    render: (scope: any) => {
       return (
         <ElSpace>
-          <ElButton type="primary">删除</ElButton>
+          <ElButton type="danger" onClick={() => onDelApply(scope.row)}>
+            删除
+          </ElButton>
         </ElSpace>
       );
     }
@@ -193,9 +195,50 @@ const queryFrom = reactive({
 
 // 搜索
 const getTableList = () => {
-  categoryAppGet(queryFrom).then((res: any) => {
-    tableData.value = res;
-  });
+  loadTable.value = true;
+  categoryAppGet(queryFrom)
+    .then((res: any) => {
+      loadTable.value = false;
+      tableData.value = res;
+    })
+    .catch(() => {
+      loadTable.value = false;
+    });
+};
+
+// 移除应用
+const onDelApply = (item: any) => {
+  ElMessageBox.confirm(`确定要对该应用移除吗?`, `操作提示`, {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    closeOnClickModal: false,
+    type: 'warning'
+  })
+    .then(() => {
+      const fromLiftban = {
+        category_no: optTree.value,
+        app_id: item.app_id
+      };
+      categoryAppDelete(fromLiftban)
+        .then((_res: any) => {
+          getTableList();
+          ElMessage({
+            type: 'success',
+            message: `应用移除成功！`
+          });
+        })
+        .catch(err => {
+          if (err.status == 400) {
+            ElMessage.error(err.msg);
+          }
+        });
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: '取消成功！'
+      });
+    });
 };
 
 onMounted(() => {

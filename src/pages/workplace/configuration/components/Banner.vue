@@ -123,9 +123,15 @@ const queryFrom = reactive({
 
 // 搜索
 const getTableList = () => {
-  bannerGet(queryFrom).then((res: any) => {
-    tableData.value = res;
-  });
+  loadTable.value = true;
+  bannerGet(queryFrom)
+    .then((res: any) => {
+      loadTable.value = false;
+      tableData.value = res;
+    })
+    .catch(() => {
+      loadTable.value = false;
+    });
 };
 
 // 新增轮播

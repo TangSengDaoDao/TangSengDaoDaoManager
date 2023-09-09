@@ -164,9 +164,15 @@ const queryFrom = reactive({
 
 // 搜索
 const getTableList = () => {
-  appGet(queryFrom).then((res: any) => {
-    tableData.value = res;
-  });
+  loadTable.value = true;
+  appGet(queryFrom)
+    .then((res: any) => {
+      loadTable.value = false;
+      tableData.value = res;
+    })
+    .catch(() => {
+      loadTable.value = false;
+    });
 };
 
 // 编辑
@@ -180,7 +186,7 @@ const oApplyEidt = (item: any) => {
 
 // 删除应用
 const onDelApply = (item: any) => {
-  ElMessageBox.confirm(`确定要对该应用吗?`, `操作提示`, {
+  ElMessageBox.confirm(`确定要对该应用删除吗?`, `操作提示`, {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     closeOnClickModal: false,
