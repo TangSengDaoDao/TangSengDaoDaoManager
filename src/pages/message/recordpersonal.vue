@@ -39,7 +39,7 @@
                 <slot :name="item.prop" :row="scope.row">{{ item.formatter(scope.row) }}</slot>
               </template>
               <template v-else>
-                <slot :name="item.prop" :row="scope.row">{{ scope.row[item.prop] }}</slot>
+                <slot :name="item.prop" :row="scope.row">{{ scope.row[item.prop!] }}</slot>
               </template>
             </template>
           </el-table-column>
