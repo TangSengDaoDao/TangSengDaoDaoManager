@@ -9,7 +9,7 @@
         </div>
       </div>
       <div class="m-12px">
-        <el-input v-model="queryFrom.keyword" placeholder="搜索分类/按回车键搜索" clearable />
+        <el-input v-model="keyword" placeholder="搜索分类/按回车键搜索" clearable />
       </div>
       <div class="flex-1 overflow-hidden">
         <el-scrollbar>
@@ -39,9 +39,6 @@
         <div class="bd-title-left"></div>
         <div class="flex items-center h-50px">
           <el-form inline>
-            <el-form-item class="mb-0 !mr-16px">
-              <el-input v-model="queryFrom.keyword" placeholder="名称" clearable />
-            </el-form-item>
             <el-form-item class="mb-0 !mr-0">
               <el-button type="primary" @click="appDialogValue = true">新增应用</el-button>
             </el-form-item>
@@ -51,11 +48,6 @@
       <!-- 表格 -->
       <div class="flex-1 overflow-hidden p-12px">
         <el-table v-loading="loadTable" :data="tableData" :border="true" style="width: 100%; height: 100%">
-          <el-table-column type="index" :width="42" :align="'center'" :fixed="'left'">
-            <template #header>
-              <i-bd-setting class="cursor-pointer" size="16" />
-            </template>
-          </el-table-column>
           <el-table-column v-for="item in column" v-bind="item" :key="item.prop">
             <template #default="scope">
               <template v-if="item.render">
@@ -71,38 +63,25 @@
           </el-table-column>
         </el-table>
       </div>
-      <!-- 分页 -->
-      <div class="bd-card-footer pl-12px pr-12px mb-12px flex items-center justify-between">
-        <div></div>
-        <el-pagination
-          v-model:current-page="queryFrom.page_index"
-          v-model:page-size="queryFrom.page_size"
-          :page-sizes="[15, 20, 30, 50, 100]"
-          :background="true"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="total"
-          @size-change="onSizeChange"
-          @current-change="onCurrentChange"
-        />
-      </div>
     </div>
     <!-- E 右侧 表格 -->
 
     <!-- 新增分类 -->
-    <CategoryDialog v-model:value="categoryDialogValue" />
+    <CategoryDialog v-model:value="categoryDialogValue" @ok="onCategoryOk" />
 
     <!-- 添加应用 -->
-    <AppDialog v-model:value="appDialogValue" />
+    <AppDialog v-model:value="appDialogValue" :data="appDialogData" @ok="onAppDialogOk" />
   </bd-page>
 </template>
 
 <script lang="tsx" name="CustomGroup" setup>
-import { ElButton, ElSpace } from 'element-plus';
+import { ElButton, ElSpace, ElImage } from 'element-plus';
 import CategoryDialog from './CategoryDialog.vue';
 import AppDialog from './AppDialog.vue';
+import { BU_DOU_CONFIG } from '@/config';
 
 // API接口
-import { categoryGet } from '@/api/workplace/category';
+import { categoryGet, categoryAppGet } from '@/api/workplace/category';
 
 interface Tree {
   category_no: string;
@@ -115,12 +94,15 @@ interface Tree {
 const categoryDialogValue = ref<boolean>(false);
 const dataTree = ref<Tree[]>([]);
 const optTree = ref('');
-// 获取
+const keyword = ref('');
+// 获取分类
 const getCategoryData = () => {
   categoryGet().then((res: any) => {
     if (res.length > 0) {
       dataTree.value = res;
-      optTree.value = res[0].category_no;
+      if (!optTree.value) {
+        optTree.value = res[0].category_no;
+      }
     }
   });
 };
@@ -130,42 +112,72 @@ const onOptTreeClick = (no: string) => {
   optTree.value = no;
 };
 
+// 确定添加应用
+const onCategoryOk = () => {
+  getCategoryData();
+};
+
 /**
  * 添加应用
  */
 const appDialogValue = ref(false);
-
+const appDialogData = ref({
+  category_no: ''
+});
+watch(
+  () => optTree.value,
+  () => {
+    appDialogData.value = {
+      category_no: optTree.value
+    };
+    queryFrom.category_no = optTree.value;
+    getTableList();
+  }
+);
+// 确定添加应用
+const onAppDialogOk = () => {
+  getTableList();
+};
 /**
  * 表格
  */
 const column = reactive<Column.ColumnOptions[]>([
   {
-    prop: 'name',
-    label: '名称'
-  },
-  {
-    prop: 'no',
-    label: '编码'
-  },
-  {
-    prop: 'status',
-    label: '状态',
-    formatter(row: any) {
-      return row.status === 1 ? '开启' : '关闭';
+    prop: 'icon',
+    label: '应用LOGO',
+    align: 'center',
+    width: 100,
+    render: (scope: any) => {
+      let img_url = '';
+      if (scope.row['icon']) {
+        img_url = `${BU_DOU_CONFIG.APP_URL}${scope.row.icon}`;
+      }
+      return <ElImage src={img_url} fit={'scale-down'} class={'w-60px h-60px'} />;
     }
   },
   {
-    prop: 'des',
+    prop: 'name',
+    label: '应用名称',
+    width: 160
+  },
+  {
+    prop: 'app_id',
+    label: '应用APP ID',
+    width: 290
+  },
+  {
+    prop: 'description',
     label: '描述'
   },
   {
     prop: 'operation',
     label: '操作',
     align: 'center',
+    width: 120,
     render: (_scope: any) => {
       return (
         <ElSpace>
-          <ElButton type="primary">配置</ElButton>
+          <ElButton type="primary">删除</ElButton>
         </ElSpace>
       );
     }
@@ -173,29 +185,17 @@ const column = reactive<Column.ColumnOptions[]>([
 ]);
 const tableData = ref<any[]>([]);
 const loadTable = ref<boolean>(false);
-// 分页
-const total = ref(0);
 
 // 查询
 const queryFrom = reactive({
-  keyword: '',
-  page_size: 15,
-  page_index: 1
+  category_no: ''
 });
 
 // 搜索
-const getTableList = () => {};
-
-// 分页page-size
-const onSizeChange = (size: number) => {
-  queryFrom.page_size = size;
-  getTableList();
-};
-
-// 分页page-size
-const onCurrentChange = (current: number) => {
-  queryFrom.page_index = current;
-  getTableList();
+const getTableList = () => {
+  categoryAppGet(queryFrom).then((res: any) => {
+    tableData.value = res;
+  });
 };
 
 onMounted(() => {

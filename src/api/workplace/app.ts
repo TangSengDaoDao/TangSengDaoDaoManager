@@ -17,3 +17,21 @@ export function appPost(data: any) {
     data
   });
 }
+
+// 编辑应用
+export function appPut(data: any) {
+  return request({
+    url: '/manager/workplace/app',
+    method: 'put',
+    data
+  });
+}
+
+// 删除应用
+export function appDelete(params: any) {
+  return request({
+    url: '/manager/workplace/app',
+    method: 'delete',
+    params
+  });
+}

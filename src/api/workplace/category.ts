@@ -17,3 +17,21 @@ export function categoryPost(data: any) {
     data
   });
 }
+
+// 分类获取应用
+export function categoryAppGet(params: any) {
+  return request({
+    url: '/manager/workplace/category/app',
+    method: 'get',
+    params
+  });
+}
+
+// 分类新增应用
+export function categoryAppPost(data: any) {
+  return request({
+    url: '/manager/workplace/category/app',
+    method: 'post',
+    data
+  });
+}

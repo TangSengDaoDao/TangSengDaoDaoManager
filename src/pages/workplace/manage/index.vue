@@ -54,7 +54,7 @@
       </div>
     </div>
     <!-- 应用 -->
-    <Apply v-model:value="applyAddValue" />
+    <Apply v-model:value="applyAddValue" :type="applyType" :title="applyTitle" :data="applyData" @ok="onApplyClick" />
   </bd-page>
 </template>
 
@@ -71,6 +71,24 @@ import { BU_DOU_CONFIG } from '@/config';
 
 // API接口
 import { appGet } from '@/api/workplace/app';
+/**
+ * 新增应用
+ */
+// 新增版本
+const applyAddValue = ref<boolean>(false);
+const applyTitle = ref('新增应用');
+const applyType = ref<'add' | 'edit'>('add');
+const onAppVersionAdd = () => {
+  applyAddValue.value = true;
+  applyTitle.value = '新增应用';
+  applyType.value = 'add';
+};
+
+// 确定应用
+const onApplyClick = () => {
+  getTableList();
+};
+
 /**
  * 表格
  */
@@ -115,10 +133,12 @@ const column = reactive<Column.ColumnOptions[]>([
     label: '操作',
     width: 150,
     align: 'center',
-    render: (_scope: any) => {
+    render: (scope: any) => {
       return (
         <ElSpace>
-          <ElButton type="primary">编辑</ElButton>
+          <ElButton type="primary" onClick={() => oApplyEidt(scope.row)}>
+            编辑
+          </ElButton>
           <ElButton>删除</ElButton>
         </ElSpace>
       );
@@ -144,6 +164,15 @@ const getTableList = () => {
   });
 };
 
+// 编辑
+const applyData = ref({});
+const oApplyEidt = (item: any) => {
+  applyTitle.value = `编辑${item.name}`;
+  applyData.value = item;
+  applyType.value = 'edit';
+  applyAddValue.value = true;
+};
+
 // 分页page-size
 const onSizeChange = (size: number) => {
   queryFrom.page_size = size;
@@ -154,12 +183,6 @@ const onSizeChange = (size: number) => {
 const onCurrentChange = (current: number) => {
   queryFrom.page_index = current;
   getTableList();
-};
-
-// 新增版本
-const applyAddValue = ref<boolean>(false);
-const onAppVersionAdd = () => {
-  applyAddValue.value = true;
 };
 
 onMounted(() => {
