@@ -68,7 +68,8 @@ meta:
 </route>
 
 <script lang="tsx" setup>
-import { ElButton, ElMessageBox, ElMessage, ElSpace, ElImage } from 'element-plus';
+import { ElButton, ElMessageBox, ElMessage, ElSpace } from 'element-plus';
+import { Fancybox } from '@fancyapps/ui';
 import Apply from './components/Apply.vue';
 import { BU_DOU_CONFIG } from '@/config';
 
@@ -92,6 +93,20 @@ const onApplyClick = () => {
   getTableList();
 };
 
+const previewPicture = (url: string) => {
+  const imgList = [];
+  imgList.push({ src: url });
+  Fancybox.show(imgList, {
+    Toolbar: {
+      display: {
+        left: ['infobar'],
+        middle: ['zoomIn', 'zoomOut', 'toggle1to1', 'rotateCCW', 'rotateCW', 'flipX', 'flipY'],
+        right: ['slideshow', 'thumbs', 'close']
+      }
+    }
+  });
+};
+
 /**
  * 表格
  */
@@ -106,7 +121,7 @@ const column = reactive<Column.ColumnOptions[]>([
       if (scope.row['icon']) {
         img_url = `${BU_DOU_CONFIG.APP_URL}${scope.row.icon}`;
       }
-      return <ElImage src={img_url} fit={'scale-down'} class={'w-60px h-60px'} />;
+      return <img src={img_url} class={'w-60px h-60px cursor-pointer'} onClick={() => previewPicture(img_url)} />;
     }
   },
   {

@@ -49,7 +49,8 @@
 </template>
 
 <script lang="tsx" name="Banner" setup>
-import { ElButton, ElSpace, ElImage, ElMessageBox, ElMessage } from 'element-plus';
+import { ElButton, ElSpace, ElMessageBox, ElMessage } from 'element-plus';
+import { Fancybox } from '@fancyapps/ui';
 import Sortable from 'sortablejs';
 import BannerDialog from './BannerDialog.vue';
 import { BU_DOU_CONFIG } from '@/config';
@@ -60,6 +61,20 @@ import { bannerGet, bannerDelete } from '@/api/workplace/banner';
 /**
  * 表格
  */
+// 图片预览
+const previewPicture = (url: string) => {
+  const imgList = [];
+  imgList.push({ src: url });
+  Fancybox.show(imgList, {
+    Toolbar: {
+      display: {
+        left: ['infobar'],
+        middle: ['zoomIn', 'zoomOut', 'toggle1to1', 'rotateCCW', 'rotateCW', 'flipX', 'flipY'],
+        right: ['slideshow', 'thumbs', 'close']
+      }
+    }
+  });
+};
 const column = reactive<Column.ColumnOptions[]>([
   {
     prop: 'title',
@@ -68,12 +83,13 @@ const column = reactive<Column.ColumnOptions[]>([
   {
     prop: 'cover',
     label: '图片',
+    width: 146,
     render: (scope: any) => {
       let img_url = '';
       if (scope.row['cover']) {
         img_url = `${BU_DOU_CONFIG.APP_URL}${scope.row.cover}`;
       }
-      return <ElImage src={img_url} fit={'scale-down'} class={'w-120px h-60px'} />;
+      return <img src={img_url} class={'w-120px h-60px cursor-pointer'} onClick={() => previewPicture(img_url)} />;
     }
   },
   {

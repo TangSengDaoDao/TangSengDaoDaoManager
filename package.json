@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.1.0",
+    "@fancyapps/ui": "^5.0.22",
     "@icon-park/vue-next": "^1.4.2",
     "@lottiefiles/lottie-player": "^2.0.2",
     "@vueuse/core": "^10.1.2",

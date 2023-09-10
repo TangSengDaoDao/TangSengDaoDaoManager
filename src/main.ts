@@ -19,6 +19,7 @@ import 'vue-global-api';
 import 'element-plus/dist/index.css';
 import 'element-plus/theme-chalk/dark/css-vars.css';
 import '@icon-park/vue-next/styles/index.css';
+import '@fancyapps/ui/dist/fancybox/fancybox.css';
 import '@/styles/index.scss';
 import 'uno.css';
 
