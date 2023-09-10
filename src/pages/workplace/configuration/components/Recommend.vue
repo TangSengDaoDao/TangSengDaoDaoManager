@@ -19,7 +19,10 @@
         <el-table v-loading="loadTable" :data="tableData" :border="true" style="width: 100%; height: 100%">
           <el-table-column type="index" :width="42" :align="'center'" :fixed="'left'">
             <template #header>
-              <i-bd-setting class="cursor-pointer" size="16" />
+              <i-bd-drag class="cursor-pointer" size="16" />
+            </template>
+            <template #default>
+              <i-bd-drag class="bd-drag cursor-pointer" size="16" />
             </template>
           </el-table-column>
           <el-table-column v-for="item in column" v-bind="item" :key="item.prop">
@@ -30,8 +33,8 @@
               <template v-else-if="item.formatter">
                 <slot :name="item.prop" :row="scope.row">{{ item.formatter(scope.row) }}</slot>
               </template>
-              <template v-else>
-                <slot :name="item.prop" :row="scope.row">{{ scope.row[item.prop] }}</slot>
+              <template v-else-if="item.prop">
+                <slot :name="item.prop" :row="scope.row">{{ scope.row[item.prop!] }}</slot>
               </template>
             </template>
           </el-table-column>
@@ -55,28 +58,38 @@
 </template>
 
 <script lang="tsx" name="Recommend" setup>
-import { ElButton, ElSpace } from 'element-plus';
+import { ElButton, ElSpace, ElImage } from 'element-plus';
+import Sortable from 'sortablejs';
+import { BU_DOU_CONFIG } from '@/config';
 /**
  * 表格
  */
 const column = reactive<Column.ColumnOptions[]>([
   {
-    prop: 'name',
-    label: '名称'
-  },
-  {
-    prop: 'no',
-    label: '编码'
-  },
-  {
-    prop: 'status',
-    label: '状态',
-    formatter(row: any) {
-      return row.status === 1 ? '开启' : '关闭';
+    prop: 'icon',
+    label: '应用LOGO',
+    align: 'center',
+    width: 100,
+    render: (scope: any) => {
+      let img_url = '';
+      if (scope.row['icon']) {
+        img_url = `${BU_DOU_CONFIG.APP_URL}${scope.row.icon}`;
+      }
+      return <ElImage src={img_url} fit={'scale-down'} class={'w-60px h-60px'} />;
     }
   },
   {
-    prop: 'des',
+    prop: 'name',
+    label: '应用名称',
+    width: 160
+  },
+  {
+    prop: 'app_id',
+    label: '应用APP ID',
+    width: 290
+  },
+  {
+    prop: 'description',
     label: '描述'
   },
   {
@@ -120,6 +133,24 @@ const onCurrentChange = (current: number) => {
 };
 
 // 新增版本
+
+// table 拖拽排序
+const tableDrop = () => {
+  Sortable.create(document.querySelector('.el-table__body-wrapper tbody') as HTMLElement, {
+    // draggable: '.bd-drag',
+    animation: 300,
+    onEnd({ newIndex, oldIndex }: any) {
+      const tablesList = [...tableData.value];
+      const currRow = tablesList.splice(oldIndex as number, 1)[0];
+      tablesList.splice(newIndex as number, 0, currRow);
+      tableData.value = tablesList;
+    }
+  });
+};
+
+onMounted(() => {
+  tableDrop();
+});
 </script>
 
 <style lang="scss" scoped>

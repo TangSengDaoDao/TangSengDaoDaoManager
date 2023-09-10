@@ -21,6 +21,9 @@
               :class="{ 'bd-tree-activate': item.category_no === optTree }"
               @click="onOptTreeClick(item.category_no)"
             >
+              <div class="mr-4px">
+                <i-bd-drag class="bd-drag cursor-pointer" size="14" />
+              </div>
               <div class="flex-1 text">{{ item.name }}</div>
               <div class="bd-opt">
                 <i-bd-editor :size="16" class="cursor-pointer pr-4px" />
@@ -48,6 +51,14 @@
       <!-- 表格 -->
       <div class="flex-1 overflow-hidden p-12px">
         <el-table v-loading="loadTable" :data="tableData" :border="true" style="width: 100%; height: 100%">
+          <el-table-column type="index" :width="42" :align="'center'" :fixed="'left'">
+            <template #header>
+              <i-bd-drag class="cursor-pointer" size="16" />
+            </template>
+            <template #default>
+              <i-bd-drag class="bd-drag cursor-pointer" size="16" />
+            </template>
+          </el-table-column>
           <el-table-column v-for="item in column" v-bind="item" :key="item.prop">
             <template #default="scope">
               <template v-if="item.render">
@@ -76,12 +87,13 @@
 
 <script lang="tsx" name="CustomGroup" setup>
 import { ElButton, ElSpace, ElImage, ElMessageBox, ElMessage } from 'element-plus';
+import Sortable from 'sortablejs';
 import CategoryDialog from './CategoryDialog.vue';
 import AppDialog from './AppDialog.vue';
 import { BU_DOU_CONFIG } from '@/config';
 
 // API接口
-import { categoryGet, categoryAppGet, categoryAppDelete } from '@/api/workplace/category';
+import { categoryGet, categoryPut, categoryAppGet, categoryAppDelete } from '@/api/workplace/category';
 
 interface Tree {
   category_no: string;
@@ -115,6 +127,30 @@ const onOptTreeClick = (no: string) => {
 // 确定添加应用
 const onCategoryOk = () => {
   getCategoryData();
+};
+
+const categoryReorder = (newIndex: string, oldIndex: string) => {
+  const fromData = {
+    category_nos: [newIndex, oldIndex]
+  };
+  categoryPut(fromData).then(res => {
+    console.log(res);
+  });
+};
+
+// tree 拖拽排序
+const treesDrop = () => {
+  Sortable.create(document.querySelector('.tree-warp') as HTMLElement, {
+    draggable: '.bd-tree-item',
+    animation: 300,
+    onEnd({ newIndex, oldIndex }: any) {
+      categoryReorder(dataTree.value[newIndex].category_no, dataTree.value[oldIndex].category_no);
+      const treesList = [...dataTree.value];
+      const currRow = treesList.splice(oldIndex as number, 1)[0];
+      treesList.splice(newIndex as number, 0, currRow);
+      dataTree.value = treesList;
+    }
+  });
 };
 
 /**
@@ -241,8 +277,24 @@ const onDelApply = (item: any) => {
     });
 };
 
+// table 拖拽排序
+const tableDrop = () => {
+  Sortable.create(document.querySelector('.el-table__body-wrapper tbody') as HTMLElement, {
+    // draggable: '.bd-drag',
+    animation: 300,
+    onEnd({ newIndex, oldIndex }: any) {
+      const tablesList = [...tableData.value];
+      const currRow = tablesList.splice(oldIndex as number, 1)[0];
+      tablesList.splice(newIndex as number, 0, currRow);
+      tableData.value = tablesList;
+    }
+  });
+};
+
 onMounted(() => {
   getCategoryData();
+  treesDrop();
+  tableDrop();
 });
 </script>
 

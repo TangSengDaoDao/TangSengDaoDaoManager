@@ -16,7 +16,10 @@
         <el-table v-loading="loadTable" :data="tableData" :border="true" style="width: 100%; height: 100%">
           <el-table-column type="index" :width="42" :align="'center'" :fixed="'left'">
             <template #header>
-              <i-bd-setting class="cursor-pointer" size="16" />
+              <i-bd-drag class="cursor-pointer" size="16" />
+            </template>
+            <template #default>
+              <i-bd-drag class="bd-drag cursor-pointer" size="16" />
             </template>
           </el-table-column>
           <el-table-column v-for="item in column" v-bind="item" :key="item.prop">
@@ -47,6 +50,7 @@
 
 <script lang="tsx" name="Banner" setup>
 import { ElButton, ElSpace, ElImage, ElMessageBox, ElMessage } from 'element-plus';
+import Sortable from 'sortablejs';
 import BannerDialog from './BannerDialog.vue';
 import { BU_DOU_CONFIG } from '@/config';
 
@@ -188,8 +192,23 @@ const onDelBanner = (item: any) => {
     });
 };
 
+// tree 拖拽排序
+const tableDrop = () => {
+  Sortable.create(document.querySelector('.el-table__body-wrapper tbody') as HTMLElement, {
+    // draggable: '.bd-drag',
+    animation: 300,
+    onEnd({ newIndex, oldIndex }: any) {
+      const tablesList = [...tableData.value];
+      const currRow = tablesList.splice(oldIndex as number, 1)[0];
+      tablesList.splice(newIndex as number, 0, currRow);
+      tableData.value = tablesList;
+    }
+  });
+};
+
 onMounted(() => {
   getTableList();
+  tableDrop();
 });
 </script>
 
