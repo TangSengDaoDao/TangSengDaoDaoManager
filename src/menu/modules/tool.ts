@@ -28,6 +28,20 @@ const home: Menu.MenuOptions = {
       }
     },
     {
+      component: '/tool/command',
+      name: 'toolCommand',
+      path: '/tool/command',
+      meta: {
+        icon: 'i-bd-command',
+        isAffix: false,
+        isFull: false,
+        isHide: false,
+        isKeepAlive: true,
+        isLink: '',
+        title: '口令管理'
+      }
+    },
+    {
       component: '/tool/systemrobotmenu',
       name: 'toolSystemrobotmenu',
       path: '/tool/systemrobotmenu',
