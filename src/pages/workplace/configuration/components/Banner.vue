@@ -44,6 +44,7 @@
       :title="bannerDialogTitle"
       :type="bannerDialogType"
       :data="bannerDialogData"
+      @ok="onBannerOk"
     />
   </bd-page>
 </template>
@@ -165,13 +166,17 @@ const onBannerDialogValue = () => {
 };
 
 // 编辑轮播
-
 const bannerDialogData = ref({});
 const onBannerEidt = (item: any) => {
   bannerDialogTitle.value = `编辑${item.title}`;
   bannerDialogData.value = item;
   bannerDialogType.value = 'edit';
   bannerDialogValue.value = true;
+};
+
+// 保存轮播
+const onBannerOk = () => {
+  getTableList();
 };
 
 // 删除轮播

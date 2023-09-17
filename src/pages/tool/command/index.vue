@@ -10,8 +10,11 @@
             <el-form-item class="mb-0 !mr-16px">
               <el-input v-model="queryFrom.keyword" placeholder="名称" clearable />
             </el-form-item>
+            <el-form-item class="mb-0 !mr-16px">
+              <el-button type="primary" @click="getTableList">查询</el-button>
+            </el-form-item>
             <el-form-item class="mb-0 !mr-0">
-              <el-button type="primary">新增口令</el-button>
+              <el-button type="primary" @click="onCommandAddClick">新增口令</el-button>
             </el-form-item>
           </el-form>
         </div>
@@ -22,9 +25,6 @@
           <el-table-column type="index" :width="42" :align="'center'" :fixed="'left'">
             <template #header>
               <i-bd-drag class="cursor-pointer" size="16" />
-            </template>
-            <template #default>
-              <i-bd-drag class="bd-drag cursor-pointer" size="16" />
             </template>
           </el-table-column>
           <el-table-column v-for="item in column" v-bind="item" :key="item.prop">
@@ -56,6 +56,14 @@
         />
       </div>
     </div>
+    <!-- 口令操作 -->
+    <CommandDialog
+      v-model:value="commandDialogValue"
+      :title="commandDialogTitle"
+      :type="commandDialogType"
+      :data="commandDialogData"
+      @ok="onCommandOk"
+    />
   </bd-page>
 </template>
 
@@ -66,33 +74,41 @@ meta:
 </route>
 
 <script lang="tsx" name="command" setup>
-import { ElButton, ElSpace } from 'element-plus';
-import Sortable from 'sortablejs';
+import { ElButton, ElSpace, ElMessage, ElMessageBox } from 'element-plus';
+import CommandDialog from './components/CommandDialog.vue';
+
+// API接口
+import { commandGet, commandDelete } from '@/api/command';
 /**
  * 表格
  */
 const column = reactive<Column.ColumnOptions[]>([
   {
-    prop: 'name',
+    prop: 'short_url',
     label: '口令名称'
   },
   {
-    prop: 'app_id',
+    prop: 'url',
     label: '地址'
   },
   {
-    prop: 'description',
-    label: '描述'
+    prop: 'create_at',
+    label: '创建时间'
   },
   {
     prop: 'operation',
     label: '操作',
+    width: 150,
     align: 'center',
-    render: (_scope: any) => {
+    render: (scope: any) => {
       return (
         <ElSpace>
-          <ElButton type="primary">编辑</ElButton>
-          <ElButton type="danger">删除</ElButton>
+          <ElButton type="primary" onClick={() => onCommandEidt(scope.row)}>
+            编辑
+          </ElButton>
+          <ElButton type="danger" onClick={() => onCommandDel(scope.row)}>
+            删除
+          </ElButton>
         </ElSpace>
       );
     }
@@ -111,7 +127,18 @@ const queryFrom = reactive({
 });
 
 // 搜索
-const getTableList = () => {};
+const getTableList = () => {
+  loadTable.value = true;
+  commandGet(queryFrom)
+    .then((res: any) => {
+      loadTable.value = false;
+      tableData.value = res.list;
+      total.value = res.count;
+    })
+    .catch(() => {
+      loadTable.value = false;
+    });
+};
 
 // 分页page-size
 const onSizeChange = (size: number) => {
@@ -125,24 +152,63 @@ const onCurrentChange = (current: number) => {
   getTableList();
 };
 
-// 新增版本
+// 新增口令
+const commandDialogValue = ref(false);
+const commandDialogTitle = ref('新增口令');
+const commandDialogType = ref<'add' | 'edit'>('add');
+const onCommandAddClick = () => {
+  commandDialogTitle.value = '新增口令';
+  commandDialogType.value = 'add';
+  commandDialogValue.value = true;
+};
 
-// table 拖拽排序
-const tableDrop = () => {
-  Sortable.create(document.querySelector('.el-table__body-wrapper tbody') as HTMLElement, {
-    // draggable: '.bd-drag',
-    animation: 300,
-    onEnd({ newIndex, oldIndex }: any) {
-      const tablesList = [...tableData.value];
-      const currRow = tablesList.splice(oldIndex as number, 1)[0];
-      tablesList.splice(newIndex as number, 0, currRow);
-      tableData.value = tablesList;
-    }
-  });
+// 编辑口令
+const commandDialogData = ref({});
+const onCommandEidt = (item: any) => {
+  commandDialogTitle.value = `编辑${item.short_url}`;
+  commandDialogData.value = item;
+  commandDialogType.value = 'edit';
+  commandDialogValue.value = true;
+};
+
+// 保存口令
+const onCommandOk = () => {
+  getTableList();
+};
+
+// 删除口令
+const onCommandDel = (item: any) => {
+  ElMessageBox.confirm(`确定要对该口令吗?`, `操作提示`, {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    closeOnClickModal: false,
+    type: 'warning'
+  })
+    .then(() => {
+      commandDelete(item.id)
+        .then((_res: any) => {
+          getTableList();
+          ElMessage({
+            type: 'success',
+            message: `口令删除成功！`
+          });
+        })
+        .catch(err => {
+          if (err.status == 400) {
+            ElMessage.error(err.msg);
+          }
+        });
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: '取消成功！'
+      });
+    });
 };
 
 onMounted(() => {
-  tableDrop();
+  getTableList();
 });
 </script>
 
