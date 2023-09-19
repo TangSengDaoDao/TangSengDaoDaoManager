@@ -19,11 +19,13 @@ Object.keys(moduleFiles).forEach(name => {
   modules[key] = moduleFiles[name];
 });
 
+
 const TSDD_CONFIG = window.TSDD_CONFIG ? window.TSDD_CONFIG : {};
 // 默认应用配置
 export const BU_DOU_CONFIG = {
   APP_TITLE: '唐僧叨叨后台管理',
-  APP_TITLE_SHORT: '唐僧',
-  // APP_URL: 'https://api.botgate.cn/v1/'
-  APP_URL: '/api/v1/' // 正式环境地址 (通用打包镜像，用此相对地址)
+  APP_TITLE_SHORT: '唐',
+  ...modules[process.env.APP_ENV as any],
+  ...TSDD_CONFIG
+  // APP_URL: '/api/v1/' // 正式环境地址 (通用打包镜像，用此相对地址)
 };
