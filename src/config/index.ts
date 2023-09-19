@@ -10,6 +10,16 @@ export const DEFAULT_PRIMARY = '#5371FF';
 // 路由白名单地址（必须是本地存在的路由 staticRouter.ts 中）
 export const ROUTER_WHITE_LIST: string[] = ['/login'];
 
+// 自定义应用根据运行环境获取配置
+const modules: any = {};
+const moduleFiles = import.meta.glob('./modules/*.ts', { import: 'default', eager: true });
+
+Object.keys(moduleFiles).forEach(name => {
+  const key = name.replace('./modules/', '').replace('.ts', '').trim();
+  modules[key] = moduleFiles[name];
+});
+
+const TSDD_CONFIG = window.TSDD_CONFIG ? window.TSDD_CONFIG : {};
 // 默认应用配置
 export const BU_DOU_CONFIG = {
   APP_TITLE: '唐僧叨叨后台管理',

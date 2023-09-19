@@ -91,3 +91,12 @@ declare namespace Column {
     render?: (scope?: any) => void;
   }
 }
+
+interface Window {
+  TSDD_CONFIG: {
+    APP_TITLE: string;
+    APP_URL: string;
+  };
+}
+
+declare const windos: Window & typeof globalThis;

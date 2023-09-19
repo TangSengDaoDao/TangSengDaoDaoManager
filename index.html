@@ -6,11 +6,11 @@
 	<link rel="icon" type="image/png" href="/logo.png" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title><%- title %></title>
-  <!-- <script src="/js/tgs-player.js"></script> -->
+  <%- injectScript %>
 </head>
 
 <body>
 	<div id="app"></div>
 </body>
-
+<script type="module" src="/src/main.ts"></script>
 </html>
