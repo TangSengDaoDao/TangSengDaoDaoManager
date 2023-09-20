@@ -118,6 +118,7 @@ const headers = {
   token: userStore.token
 };
 const actionURL = ref('');
+// 图片上传前获取上传地址
 const beforeAvatarUpload = async (rawFile: any) => {
   const fileData = {
     path: `/${rawFile.uid}/${rawFile.name}`,
@@ -131,6 +132,7 @@ const beforeAvatarUpload = async (rawFile: any) => {
     return false;
   }
 };
+// 图片上传成功获取地址
 const handleAvatarSuccess = (response: any, _uploadFile: any) => {
   formData.value.cover = response.path;
 };
