@@ -17,7 +17,7 @@
       <el-form-item label="应用图标">
         <el-upload
           ref="upload"
-          class="bd-uplod"
+          class="bd-upload"
           :action="actionURL"
           list-type="picture-card"
           :show-file-list="false"
@@ -214,7 +214,7 @@ const onConfirm = () => {
 </script>
 
 <style lang="scss" scoped>
-.bd-uplod {
+.bd-upload {
   ::v-deep(.el-upload--picture-card) {
     height: 78px;
     width: 78px;
