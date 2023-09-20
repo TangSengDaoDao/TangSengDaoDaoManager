@@ -81,7 +81,7 @@ const userStore = useUserStore();
 const column = reactive<Column.ColumnOptions[]>([
   {
     prop: 'name',
-    label: '用户名',
+    label: '昵称',
     fixed: 'left',
     width: 140
   },
@@ -89,6 +89,11 @@ const column = reactive<Column.ColumnOptions[]>([
     prop: 'phone',
     label: '手机号',
     fixed: 'left',
+    width: 120
+  },
+  {
+    prop: 'username',
+    label: '用户',
     width: 120
   },
   {
