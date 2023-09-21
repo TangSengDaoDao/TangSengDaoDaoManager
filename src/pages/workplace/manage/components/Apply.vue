@@ -22,8 +22,8 @@
           list-type="picture-card"
           :show-file-list="false"
           :headers="headers"
-          :before-upload="beforeAvatarUpload"
-          :on-success="handleAvatarSuccess"
+          :before-upload="beforeUploadFile"
+          :on-success="onFileSuccess"
         >
           <img v-if="formData.icon" :src="`${BU_DOU_CONFIG.APP_URL}${formData.icon}`" class="avatar" />
           <el-icon v-else><Plus /></el-icon>
@@ -133,11 +133,15 @@ watch(
   }
 );
 
+/**
+ * 上传图片
+ */
 const headers = {
   token: userStore.token
 };
 const actionURL = ref('');
-const beforeAvatarUpload = async (rawFile: any) => {
+// 图片上传前获取上传地址
+const beforeUploadFile = async (rawFile: any) => {
   const fileData = {
     path: `/${rawFile.uid}/${rawFile.name}`,
     type: 'report'
@@ -150,7 +154,8 @@ const beforeAvatarUpload = async (rawFile: any) => {
     return false;
   }
 };
-const handleAvatarSuccess = (response: any, _uploadFile: any) => {
+// 图片上传成功获取地址
+const onFileSuccess = (response: any, _uploadFile: any) => {
   formData.value.icon = response.path;
 };
 
