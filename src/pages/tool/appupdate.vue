@@ -51,7 +51,7 @@
       </div>
     </div>
     <!-- 新增版本 -->
-    <bd-app-version v-model:value="appVersionAddValue" />
+    <bd-app-version v-model:value="appVersionAddValue" @ok="onAppVersionOk" />
   </bd-page>
 </template>
 
@@ -132,6 +132,11 @@ const onCurrentChange = (current: number) => {
 const appVersionAddValue = ref<boolean>(false);
 const onAppVersionAdd = () => {
   appVersionAddValue.value = true;
+};
+
+// 新增成功
+const onAppVersionOk = () => {
+  getTableList();
 };
 // 初始化
 onMounted(() => {
