@@ -5,7 +5,7 @@
 唐僧叨叨后台管理一款基于 Vue3.3、TypeScript、Vite5、Pinia、Element-Plus 开源的后台管理框架，使用目前最新技术栈开发；是唐僧叨叨业务管理后台。
 
 - 使用 Vue3.3 + TypeScript 开发，单文件组件＜script setup＞
-- 采用 Vite5 作为项目开发、打包工具（配置 gzip/brotli 打包、tsx 语法、跨域代理…）
+- 采用 Vite 作为项目开发、打包工具（配置 gzip/brotli 打包、tsx 语法、跨域代理…）
 - 使用 Pinia 替代 Vuex，轻量、简单、易用，集成 Pinia 持久化插件
 - 使用 TypeScript 对 Axios 整个二次封装（请求拦截、取消、常用请求封装…）
 - 支持 Element 组件大小切换、多主题布局、暗黑模式、i18n 国际化
