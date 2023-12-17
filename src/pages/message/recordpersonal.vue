@@ -225,6 +225,7 @@ const msgDel = (data: any) => {
   const formData = {
     channel_id: route.query.uid,
     channel_type: 1,
+    from_uid: route.query.touid,
     list
   };
   messageDelete(formData).then((res: any) => {
