@@ -24,16 +24,20 @@
         </el-radio-group>
       </el-form-item>
       <el-form-item label="安装包">
-        <el-upload
-          ref="upload"
-          action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
-          :limit="1"
-          :auto-upload="false"
-        >
-          <template #trigger>
-            <el-button type="primary">点击上传APK</el-button>
-          </template>
-        </el-upload>
+        <div class="w-100%">
+          <el-upload
+            ref="upload"
+            :action="actionURL"
+            :limit="1"
+            :headers="headers"
+            :before-upload="beforeUploadFile"
+            :on-success="onFileSuccess"
+          >
+            <template #trigger>
+              <el-button type="primary">点击上传APK</el-button>
+            </template>
+          </el-upload>
+        </div>
       </el-form-item>
       <el-form-item label="版本号">
         <el-input v-model="formData.app_version" placeholder="请输入版本号" />
@@ -59,25 +63,19 @@
 <script lang="ts" name="BdAppVersion" setup>
 import { ref } from 'vue';
 import { ElMessage } from 'element-plus';
+import { useUserStore } from '@/stores/modules/user';
+
 // API 接口
 import { commonAppversionPost } from '@/api/tool';
+import { feileGet } from '@/api/file';
+
 interface IProps {
   value: boolean;
 }
+
 const props = withDefaults(defineProps<IProps>(), {
   value: false
 });
-
-const content = ref('');
-const loaging = ref<boolean>(false);
-const formData = reactive({
-  app_version: '',
-  os: 'android',
-  is_force: 0,
-  update_desc: '',
-  download_url: ''
-});
-
 const emits = defineEmits<{
   (e: 'update:value', item: boolean): void;
   (e: 'ok', item: any): void;
@@ -89,6 +87,47 @@ watch(
     props.value = n;
   }
 );
+
+const userStore = useUserStore();
+const content = ref('');
+const loaging = ref<boolean>(false);
+const formData = reactive({
+  app_version: '',
+  os: 'android',
+  is_force: 0,
+  update_desc: '',
+  download_url: ''
+});
+
+/**
+ * 上传图片
+ */
+const headers = {
+  token: userStore.token
+};
+const actionURL = ref('');
+// 图片上传前获取上传地址
+const beforeUploadFile = async (rawFile: any) => {
+  const fileData = {
+    path: `/${rawFile.uid}/${rawFile.name}`,
+    type: 'common'
+  };
+
+  const res = (await feileGet(fileData)) as any;
+  if (res.url) {
+    actionURL.value = res.url;
+    return true;
+  } else {
+    return false;
+  }
+};
+
+// 图片上传成功获取地址
+const onFileSuccess = (response: any, _uploadFile: any) => {
+  console.log(response);
+  formData.download_url = response.path;
+};
+
 // 取消
 const onClose = () => {
   emits('update:value', false);
