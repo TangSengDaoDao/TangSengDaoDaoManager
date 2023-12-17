@@ -97,6 +97,7 @@ pnpm serve
 ![home](./docs/home/home.png)
 
 ![theme](./docs/home/theme.png)
+![theme](./docs/home/dark.png)
 
 - 用户
 
