@@ -1,6 +1,6 @@
 # 唐僧叨叨后台管理
 
-## 介绍 📖
+### 介绍 📖
 
 唐僧叨叨后台管理一款基于 Vue3.3、TypeScript、Vite5、Pinia、Element-Plus 开源的后台管理框架，使用目前最新技术栈开发；是唐僧叨叨业务管理后台。
 
@@ -15,7 +15,7 @@
 - 使用 Prettier 统一格式化代码，集成 ESLint、Stylelint 代码校验规范
 - 使用 husky、lint-staged、commitlint、czg、cz-git 规范提交信息
 
-## 安装使用步骤 📔
+### 安装使用步骤 📔
 
 环境变量
 - NODE_ENV node环境变量
@@ -55,7 +55,7 @@ pnpm build:config
 pnpm serve
 ```
 
-## 功能特色 🔨
+### 功能特色 🔨
 
 - [x] 首页
   - [x] 仪表盘
@@ -89,7 +89,7 @@ pnpm serve
 - [x] 设置
   - [x] 通用设置
   - [x] 修改登录密码
-## 功能截图 📷
+### 功能截图 📷
 
 
 - 首页
