@@ -50,7 +50,7 @@
       </div>
       <!-- 表格 -->
       <div class="flex-1 overflow-hidden p-12px">
-        <el-table v-loading="loadTable" :data="tableData" :border="true" style="width: 100%; height: 100%">
+        <el-table v-loading="loadTable" :data="tableData" row-key="app_id" :border="true" style="width: 100%; height: 100%">
           <el-table-column type="index" :width="42" :align="'center'" :fixed="'left'">
             <template #header>
               <i-bd-drag class="cursor-pointer" size="16" />
@@ -164,7 +164,7 @@ const categoryReorder = (newIndex: string, oldIndex: string) => {
 // 分类拖拽排序
 const treesDrop = () => {
   Sortable.create(document.querySelector('.tree-warp') as HTMLElement, {
-    draggable: '.bd-tree-item',
+    handle: '.bd-drag',
     animation: 300,
     onEnd({ newIndex, oldIndex }: any) {
       const treesList = [...dataTree.value];
@@ -371,7 +371,7 @@ const categorysAppsReorder = (new_app_id: string, old_app_id: string) => {
 // table 拖拽排序
 const tableDrop = () => {
   Sortable.create(document.querySelector('.el-table__body-wrapper tbody') as HTMLElement, {
-    // draggable: '.bd-drag',
+    handle: '.bd-drag',
     animation: 300,
     onEnd({ newIndex, oldIndex }: any) {
       const tablesList = [...tableData.value];

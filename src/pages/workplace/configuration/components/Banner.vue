@@ -13,7 +13,7 @@
       </div>
 
       <div class="flex-1 overflow-hidden p-12px">
-        <el-table v-loading="loadTable" :data="tableData" :border="true" style="width: 100%; height: 100%">
+        <el-table v-loading="loadTable" :data="tableData" row-key="banner_no" :border="true" style="width: 100%; height: 100%">
           <el-table-column type="index" :width="42" :align="'center'" :fixed="'left'">
             <template #header>
               <i-bd-drag class="cursor-pointer" size="16" />
@@ -57,7 +57,7 @@ import BannerDialog from './BannerDialog.vue';
 import { BU_DOU_CONFIG } from '@/config';
 
 // API接口
-import { bannerGet, bannerDelete } from '@/api/workplace/banner';
+import { bannerGet, bannerDelete, bannerReorderPut } from '@/api/workplace/banner';
 
 /**
  * 表格
@@ -210,16 +210,36 @@ const onDelBanner = (item: any) => {
     });
 };
 
+const bannerReorder = (newIndex: string, oldIndex: string) => {
+  const fromData = {
+    banner_nos: [newIndex, oldIndex]
+  };
+  bannerReorderPut(fromData).then(res => {
+    if (res.status == 200) {
+      getTableList();
+      ElMessage({
+        type: 'success',
+        message: `轮播排序成功`
+      });
+    } else {
+      ElMessage({
+        type: 'info',
+        message: '轮播排序失败!'
+      });
+    }
+  });
+};
+
 // tree 拖拽排序
 const tableDrop = () => {
   Sortable.create(document.querySelector('.el-table__body-wrapper tbody') as HTMLElement, {
-    // draggable: '.bd-drag',
+    handle: '.bd-drag',
     animation: 300,
     onEnd({ newIndex, oldIndex }: any) {
       const tablesList = [...tableData.value];
       const currRow = tablesList.splice(oldIndex as number, 1)[0];
       tablesList.splice(newIndex as number, 0, currRow);
-      tableData.value = tablesList;
+      bannerReorder(tablesList[newIndex].banner_no, tablesList[oldIndex].banner_no);
     }
   });
 };

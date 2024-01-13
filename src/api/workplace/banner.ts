@@ -34,3 +34,12 @@ export function bannerDelete(banner_no: string) {
     method: 'delete'
   });
 }
+
+// 轮播排序
+export function bannerReorderPut(data: any) {
+  return request({
+    url: `/manager/workplace/banner/reorder`,
+    method: 'put',
+    data
+  });
+}
