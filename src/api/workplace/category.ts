@@ -28,28 +28,35 @@ export function categoryPut(data: any) {
 }
 
 // 分类获取应用
-export function categoryAppGet(params: any) {
+export function categoryAppGet(category_no: string) {
   return request({
-    url: '/manager/workplace/category/app',
-    method: 'get',
-    params
+    url: `/manager/workplace/categorys/${category_no}/app`,
+    method: 'get'
   });
 }
 
 // 分类新增应用
-export function categoryAppPost(data: any) {
+export function categoryAppPost(data: any, category_no: string) {
   return request({
-    url: '/manager/workplace/category/app',
+    url: `/manager/workplace/categorys/${category_no}/app`,
     method: 'post',
     data
   });
 }
 
 // 分类删除应用
-export function categoryAppDelete(params: any) {
+export function categoryAppDelete(category_no: string, app_id: string) {
   return request({
-    url: '/manager/workplace/category/app',
-    method: 'delete',
-    params
+    url: `/manager/workplace/categorys/${category_no}/apps/${app_id}`,
+    method: 'delete'
+  });
+}
+
+// 分类应用排序
+export function categorysAppsReorderPut(data: any, category_no: string) {
+  return request({
+    url: `/manager/workplace/categorys/${category_no}/app/reorder`,
+    method: 'put',
+    data
   });
 }

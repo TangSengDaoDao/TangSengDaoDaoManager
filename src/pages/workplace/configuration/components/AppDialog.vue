@@ -130,11 +130,10 @@ const onConfirm = () => {
     return ElMessage.info('请输入分类！');
   }
   const fromData = {
-    category_no: props.data.category_no,
     app_ids: selectionData.value
   };
   loaging.value = true;
-  categoryAppPost(fromData)
+  categoryAppPost(fromData, props.data.category_no)
     .then((res: any) => {
       loaging.value = false;
       if (res.status == 200) {

@@ -93,7 +93,7 @@ import AppDialog from './AppDialog.vue';
 import { BU_DOU_CONFIG } from '@/config';
 
 // API接口
-import { categoryGet, categoryPut, categoryAppGet, categoryAppDelete } from '@/api/workplace/category';
+import { categoryGet, categoryPut, categoryAppGet, categoryAppDelete, categorysAppsReorderPut } from '@/api/workplace/category';
 
 interface Tree {
   category_no: string;
@@ -134,21 +134,31 @@ const categoryReorder = (newIndex: string, oldIndex: string) => {
     category_nos: [newIndex, oldIndex]
   };
   categoryPut(fromData).then(res => {
-    console.log(res);
+    if (res.status == 200) {
+      getCategoryData();
+      ElMessage({
+        type: 'success',
+        message: `分类排序成功`
+      });
+    } else {
+      ElMessage({
+        type: 'info',
+        message: '分类排序失败!'
+      });
+    }
   });
 };
 
-// tree 拖拽排序
+// 分类拖拽排序
 const treesDrop = () => {
   Sortable.create(document.querySelector('.tree-warp') as HTMLElement, {
     draggable: '.bd-tree-item',
     animation: 300,
     onEnd({ newIndex, oldIndex }: any) {
-      categoryReorder(dataTree.value[newIndex].category_no, dataTree.value[oldIndex].category_no);
       const treesList = [...dataTree.value];
       const currRow = treesList.splice(oldIndex as number, 1)[0];
       treesList.splice(newIndex as number, 0, currRow);
-      dataTree.value = treesList;
+      categoryReorder(treesList[newIndex].category_no, treesList[oldIndex].category_no);
     }
   });
 };
@@ -209,7 +219,7 @@ const column = reactive<Column.ColumnOptions[]>([
     prop: 'operation',
     label: '操作',
     align: 'center',
-    width: 84,
+    width: 80,
     render: (scope: any) => {
       return (
         <ElSpace>
@@ -232,7 +242,7 @@ const queryFrom = reactive({
 // 搜索
 const getTableList = () => {
   loadTable.value = true;
-  categoryAppGet(queryFrom)
+  categoryAppGet(queryFrom.category_no)
     .then((res: any) => {
       loadTable.value = false;
       tableData.value = res;
@@ -251,11 +261,7 @@ const onDelApply = (item: any) => {
     type: 'warning'
   })
     .then(() => {
-      const fromLiftban = {
-        category_no: optTree.value,
-        app_id: item.app_id
-      };
-      categoryAppDelete(fromLiftban)
+      categoryAppDelete(optTree.value, item.app_id)
         .then((_res: any) => {
           getTableList();
           ElMessage({
@@ -277,6 +283,26 @@ const onDelApply = (item: any) => {
     });
 };
 
+const categorysAppsReorder = (new_app_id: string, old_app_id: string) => {
+  const fromData = {
+    app_ids: [new_app_id, old_app_id]
+  };
+  categorysAppsReorderPut(fromData, queryFrom.category_no).then(res => {
+    if (res.status == 200) {
+      getTableList();
+      ElMessage({
+        type: 'success',
+        message: `应用排序成功`
+      });
+    } else {
+      ElMessage({
+        type: 'info',
+        message: '应用排序失败!'
+      });
+    }
+  });
+};
+
 // table 拖拽排序
 const tableDrop = () => {
   Sortable.create(document.querySelector('.el-table__body-wrapper tbody') as HTMLElement, {
@@ -287,10 +313,13 @@ const tableDrop = () => {
       const currRow = tablesList.splice(oldIndex as number, 1)[0];
       tablesList.splice(newIndex as number, 0, currRow);
       tableData.value = tablesList;
+      categorysAppsReorder(tablesList[newIndex].app_id, tablesList[oldIndex].app_id);
     }
   });
 };
-
+/**
+ * 初始化数据
+ */
 onMounted(() => {
   getCategoryData();
   treesDrop();
