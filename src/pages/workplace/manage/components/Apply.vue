@@ -35,16 +35,12 @@
           <el-radio :label="1">APP</el-radio>
         </el-radio-group>
       </el-form-item>
-      <template v-if="formData.jump_type === 0">
-        <el-form-item label="网页地址">
-          <el-input v-model="formData.web_route" placeholder="请输入网页地址" />
-        </el-form-item>
-      </template>
-      <template v-if="formData.jump_type === 1">
-        <el-form-item label="APP地址">
-          <el-input v-model="formData.app_route" placeholder="请输入APP地址" />
-        </el-form-item>
-      </template>
+      <el-form-item label="网页地址">
+        <el-input v-model="formData.web_route" placeholder="请输入网页地址" />
+      </el-form-item>
+      <el-form-item label="APP地址">
+        <el-input v-model="formData.app_route" placeholder="请输入APP地址" />
+      </el-form-item>
       <el-form-item label="付款">
         <el-radio-group v-model="formData.is_paid_app">
           <el-radio :label="0">免费</el-radio>
@@ -188,7 +184,8 @@ const addApp = () => {
 // 编辑
 const editApp = () => {
   loaging.value = true;
-  appPut(formData.value)
+  const app_id = (props.data as any).app_id;
+  appPut(formData.value, app_id)
     .then((res: any) => {
       loaging.value = false;
       if (res.status == 200) {

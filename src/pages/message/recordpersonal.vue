@@ -198,8 +198,8 @@ const getUserList = () => {
   loadTable.value = true;
   messageRecordpersonalGet(queryFrom).then((res: any) => {
     loadTable.value = false;
-    tableData.value = res.list;
-    total.value = res.count;
+    tableData.value = res?.list ? res?.list : [];
+    total.value = res?.count ? res?.count : 0;
   });
 };
 

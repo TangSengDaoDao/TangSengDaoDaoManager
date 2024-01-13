@@ -208,10 +208,7 @@ const onDelApply = (item: any) => {
     type: 'warning'
   })
     .then(() => {
-      const fromLiftban = {
-        banner_no: item.banner_no
-      };
-      appDelete(fromLiftban)
+      appDelete(item.app_id)
         .then((_res: any) => {
           getTableList();
           ElMessage({

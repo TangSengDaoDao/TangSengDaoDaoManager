@@ -19,19 +19,18 @@ export function bannerPost(data: any) {
 }
 
 // 编辑轮播
-export function bannerPut(data: any) {
+export function bannerPut(data: any, banner_no: string) {
   return request({
-    url: '/manager/workplace/banner',
-    method: 'post',
+    url: `/manager/workplace/banners/${banner_no}`,
+    method: 'put',
     data
   });
 }
 
 // 删除轮播
-export function bannerDelete(params: any) {
+export function bannerDelete(banner_no: string) {
   return request({
-    url: '/manager/workplace/banner',
-    method: 'delete',
-    params
+    url: `/manager/workplace/banners/${banner_no}`,
+    method: 'delete'
   });
 }

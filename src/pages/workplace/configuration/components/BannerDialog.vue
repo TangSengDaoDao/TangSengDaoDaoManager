@@ -168,7 +168,8 @@ const addBanner = () => {
 // 编辑轮播
 const editBanner = () => {
   loaging.value = true;
-  bannerPut(formData.value)
+  const banner_no = (props.data as any).banner_no;
+  bannerPut(formData.value, banner_no)
     .then((res: any) => {
       loaging.value = false;
       if (res.status == 200) {

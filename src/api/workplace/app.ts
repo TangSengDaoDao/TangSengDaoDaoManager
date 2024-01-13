@@ -19,19 +19,18 @@ export function appPost(data: any) {
 }
 
 // 编辑应用
-export function appPut(data: any) {
+export function appPut(data: any, app_id: string) {
   return request({
-    url: '/manager/workplace/app',
+    url: `/manager/workplace/apps/${app_id}`,
     method: 'put',
     data
   });
 }
 
 // 删除应用
-export function appDelete(params: any) {
+export function appDelete(app_id: string) {
   return request({
-    url: '/manager/workplace/app',
-    method: 'delete',
-    params
+    url: `/manager/workplace/apps/${app_id}`,
+    method: 'delete'
   });
 }
