@@ -26,12 +26,20 @@
 import { ref } from 'vue';
 import { ElMessage } from 'element-plus';
 // API 接口
-import { categoryPost } from '@/api/workplace/category';
+import { categoryPost, categoryPut } from '@/api/workplace/category';
 interface IProps {
   value: boolean;
+  type: 'add' | 'edit';
+  data: {
+    category_no?: string;
+    name?: string;
+    sort_num?: number;
+  };
 }
 const props = withDefaults(defineProps<IProps>(), {
-  value: false
+  value: false,
+  title: '新增分类',
+  type: 'add'
 });
 
 const content = ref('');
@@ -47,17 +55,21 @@ watch(
   (n, _o) => {
     console.log(props.value);
     props.value = n;
+    if (n && props.type == 'edit') {
+      content.value = props.data?.name || '';
+    }
+    if (!n) {
+      content.value = '';
+    }
   }
 );
 // 取消
 const onClose = () => {
   emits('update:value', false);
 };
-// 发送
-const onSend = () => {
-  if (!content.value) {
-    return ElMessage.info('请输入分类！');
-  }
+
+// 新增分类
+const addCategor = () => {
   const fromData = {
     name: content.value
   };
@@ -66,7 +78,7 @@ const onSend = () => {
     .then((res: any) => {
       loaging.value = false;
       if (res.status == 200) {
-        ElMessage.success('新增分类成功！');
+        ElMessage.success('编辑分类成功！');
         content.value = '';
         onClose();
         emits('ok', true);
@@ -78,5 +90,44 @@ const onSend = () => {
         ElMessage.error(err.msg);
       }
     });
+};
+// 编辑分类
+const editCategor = () => {
+  const fromData = {
+    name: content.value
+  };
+  loaging.value = true;
+  const category_no = (props.data as any).category_no;
+  categoryPut(fromData, category_no)
+    .then((res: any) => {
+      loaging.value = false;
+      if (res.status == 200) {
+        ElMessage.success('编辑分类成功！');
+        content.value = '';
+        onClose();
+        emits('ok', true);
+      }
+    })
+    .catch(err => {
+      loaging.value = false;
+      if (err.status == 400) {
+        ElMessage.error(err.msg);
+      }
+    });
+};
+
+// 保存
+const onSend = () => {
+  if (!content.value) {
+    return ElMessage.info('请输入分类！');
+  }
+  // 新增
+  if (props.type === 'add') {
+    addCategor();
+  }
+  // 编辑
+  if (props.type === 'edit') {
+    editCategor();
+  }
 };
 </script>

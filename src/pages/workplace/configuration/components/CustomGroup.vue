@@ -5,7 +5,7 @@
       <div class="h-50px pl-12px pr-12px box-border flex items-center justify-between bd-title">
         <div class="bd-title-left font-500 text-14px">分组</div>
         <div class="flex items-center h-50px">
-          <i-bd-add :size="22" class="cursor-pointer" @click="categoryDialogValue = true" />
+          <i-bd-add :size="22" class="cursor-pointer" @click="onCategoryAdd" />
         </div>
       </div>
       <div class="m-12px">
@@ -26,8 +26,8 @@
               </div>
               <div class="flex-1 text">{{ item.name }}</div>
               <div class="bd-opt">
-                <i-bd-editor :size="16" class="cursor-pointer pr-4px" />
-                <i-bd-delete :size="16" class="cursor-pointer" />
+                <i-bd-editor :size="16" class="cursor-pointer pr-4px" @click.stop="onCategoryEdit(item)" />
+                <i-bd-delete :size="16" class="cursor-pointer" @click.stop="onCategoryDelete(item)" />
               </div>
             </div>
           </div>
@@ -78,7 +78,13 @@
     <!-- E 右侧 表格 -->
 
     <!-- 新增分类 -->
-    <CategoryDialog v-model:value="categoryDialogValue" @ok="onCategoryOk" />
+    <CategoryDialog
+      v-model:value="categoryValue"
+      :type="categoryType"
+      :title="categoryTitle"
+      :data="categoryData"
+      @ok="onCategoryOk"
+    />
 
     <!-- 添加应用 -->
     <AppDialog v-model:value="appDialogValue" :data="appDialogData" @ok="onAppDialogOk" />
@@ -93,7 +99,14 @@ import AppDialog from './AppDialog.vue';
 import { BU_DOU_CONFIG } from '@/config';
 
 // API接口
-import { categoryGet, categoryPut, categoryAppGet, categoryAppDelete, categorysAppsReorderPut } from '@/api/workplace/category';
+import {
+  categoryGet,
+  categoryDelete,
+  categoryReorderPut,
+  categoryAppGet,
+  categoryAppDelete,
+  categorysAppsReorderPut
+} from '@/api/workplace/category';
 
 interface Tree {
   category_no: string;
@@ -103,7 +116,6 @@ interface Tree {
 /**
  * 左侧分类
  */
-const categoryDialogValue = ref<boolean>(false);
 const dataTree = ref<Tree[]>([]);
 const optTree = ref('');
 const keyword = ref('');
@@ -128,12 +140,12 @@ const onOptTreeClick = (no: string) => {
 const onCategoryOk = () => {
   getCategoryData();
 };
-
+// 分类排序
 const categoryReorder = (newIndex: string, oldIndex: string) => {
   const fromData = {
     category_nos: [newIndex, oldIndex]
   };
-  categoryPut(fromData).then(res => {
+  categoryReorderPut(fromData).then(res => {
     if (res.status == 200) {
       getCategoryData();
       ElMessage({
@@ -161,6 +173,59 @@ const treesDrop = () => {
       categoryReorder(treesList[newIndex].category_no, treesList[oldIndex].category_no);
     }
   });
+};
+
+const categoryValue = ref(false);
+const categoryTitle = ref('新增分类');
+const categoryType = ref<'add' | 'edit'>('add');
+const categoryData = ref({});
+
+// 分类新增
+const onCategoryAdd = () => {
+  categoryValue.value = true;
+  categoryTitle.value = '新增分类';
+  categoryType.value = 'add';
+  categoryData.value = {};
+};
+
+// 分类编辑
+const onCategoryEdit = (item: any) => {
+  console.log(item);
+  categoryValue.value = true;
+  categoryTitle.value = '编辑分类';
+  categoryType.value = 'edit';
+  categoryData.value = { ...item };
+};
+
+// 分类删除
+const onCategoryDelete = (item: any) => {
+  ElMessageBox.confirm(`确定要对该分类吗?`, `操作提示`, {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    closeOnClickModal: false,
+    type: 'warning'
+  })
+    .then(() => {
+      categoryDelete(item.category_no)
+        .then((_res: any) => {
+          getCategoryData();
+          ElMessage({
+            type: 'success',
+            message: `轮播删除成功！`
+          });
+        })
+        .catch(err => {
+          if (err.status == 400) {
+            ElMessage.error(err.msg);
+          }
+        });
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: '取消成功！'
+      });
+    });
 };
 
 /**

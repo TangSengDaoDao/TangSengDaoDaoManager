@@ -18,8 +18,25 @@ export function categoryPost(data: any) {
   });
 }
 
+// 分类编辑
+export function categoryPut(data: any, category_no: string) {
+  return request({
+    url: `/manager/workplace/categorys/${category_no}`,
+    method: 'put',
+    data
+  });
+}
+
+// 删除分类
+export function categoryDelete(category_no: string) {
+  return request({
+    url: `/manager/workplace/categorys/${category_no}`,
+    method: 'delete'
+  });
+}
+
 // 分类排序
-export function categoryPut(data: any) {
+export function categoryReorderPut(data: any) {
   return request({
     url: '/manager/workplace/category/reorder',
     method: 'put',

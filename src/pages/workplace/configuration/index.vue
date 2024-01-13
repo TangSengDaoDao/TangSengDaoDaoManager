@@ -18,7 +18,6 @@ meta:
 
 <script lang="tsx" setup>
 import Banner from './components/Banner.vue';
-import Recommend from './components/Recommend.vue';
 import CustomGroup from './components/CustomGroup.vue';
 
 const activeName = ref('banner');
@@ -29,13 +28,6 @@ const tabsData = reactive([
     label: '轮播',
     render: () => {
       return <Banner />;
-    }
-  },
-  {
-    name: 'recommend',
-    label: '管理员推荐',
-    render: () => {
-      return <Recommend />;
     }
   },
   {
