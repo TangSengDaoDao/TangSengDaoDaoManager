@@ -170,7 +170,13 @@ const treesDrop = () => {
       const treesList = [...dataTree.value];
       const currRow = treesList.splice(oldIndex as number, 1)[0];
       treesList.splice(newIndex as number, 0, currRow);
-      categoryReorder(treesList[newIndex].category_no, treesList[oldIndex].category_no);
+      if (oldIndex > newIndex) {
+        // 向上排序
+        categoryReorder(treesList[newIndex].category_no, treesList[oldIndex].category_no);
+      } else {
+        // 向下排序
+        categoryReorder(treesList[oldIndex].category_no, treesList[newIndex].category_no);
+      }
     }
   });
 };
@@ -378,7 +384,13 @@ const tableDrop = () => {
       const currRow = tablesList.splice(oldIndex as number, 1)[0];
       tablesList.splice(newIndex as number, 0, currRow);
       tableData.value = tablesList;
-      categorysAppsReorder(tablesList[newIndex].app_id, tablesList[oldIndex].app_id);
+      if (oldIndex > newIndex) {
+        // 向上排序
+        categorysAppsReorder(tablesList[newIndex].app_id, tablesList[oldIndex].app_id);
+      } else {
+        // 向下排序
+        categorysAppsReorder(tablesList[oldIndex].app_id, tablesList[newIndex].app_id);
+      }
     }
   });
 };

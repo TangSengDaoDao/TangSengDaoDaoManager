@@ -235,11 +235,18 @@ const tableDrop = () => {
   Sortable.create(document.querySelector('.el-table__body-wrapper tbody') as HTMLElement, {
     handle: '.bd-drag',
     animation: 300,
-    onEnd({ newIndex, oldIndex }: any) {
+    onEnd(evt: any) {
+      const { newIndex, oldIndex } = evt;
       const tablesList = [...tableData.value];
       const currRow = tablesList.splice(oldIndex as number, 1)[0];
       tablesList.splice(newIndex as number, 0, currRow);
-      bannerReorder(tablesList[newIndex].banner_no, tablesList[oldIndex].banner_no);
+      if (oldIndex > newIndex) {
+        // 向上排序
+        bannerReorder(tablesList[newIndex].banner_no, tablesList[oldIndex].banner_no);
+      } else {
+        // 向下排序
+        bannerReorder(tablesList[oldIndex].banner_no, tablesList[newIndex].banner_no);
+      }
     }
   });
 };
