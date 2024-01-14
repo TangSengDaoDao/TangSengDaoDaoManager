@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     :model-value="value"
-    :width="600"
+    :width="780"
     :align-center="true"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
@@ -11,7 +11,7 @@
     @close="onClose"
   >
     <div class="h-540px flex-col">
-      <el-input v-model="content" class="mb-12px" placeholder="请输入应用名称" maxlength="10" show-word-limit />
+      <el-input v-model="queryFrom.keyword" class="mb-12px" placeholder="请输入应用名称" clearable @keyup.enter="onSearch" />
       <!-- 表格 -->
       <div class="flex-1 overflow-hidden">
         <el-table
@@ -36,6 +36,20 @@
             </template>
           </el-table-column>
         </el-table>
+      </div>
+      <!-- 分页 -->
+      <div class="bd-card-footer mt-12px flex items-center justify-between">
+        <div></div>
+        <el-pagination
+          v-model:current-page="queryFrom.page_index"
+          v-model:page-size="queryFrom.page_size"
+          :page-sizes="[15, 20, 30, 50, 100]"
+          :background="true"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="total"
+          @size-change="onSizeChange"
+          @current-change="onCurrentChange"
+        />
       </div>
     </div>
     <template #footer>
@@ -64,7 +78,6 @@ const props = withDefaults(defineProps<IProps>(), {
   value: false
 });
 
-const content = ref('');
 const loaging = ref<boolean>(false);
 
 const emits = defineEmits<{
@@ -106,11 +119,26 @@ const queryFrom = reactive({
   page_size: 15,
   page_index: 1
 });
+const total = ref(0);
 // 获取表格数据
 const getTableList = () => {
-  appGet(queryFrom).then((res: any) => {
-    tableData.value = res;
-  });
+  loadTable.value = true;
+  appGet(queryFrom)
+    .then((res: any) => {
+      loadTable.value = false;
+      tableData.value = res.list || [];
+      total.value = res.count || 0;
+    })
+    .catch(() => {
+      loadTable.value = false;
+    });
+};
+
+// 搜索
+const onSearch = () => {
+  queryFrom.page_index = 1;
+  queryFrom.page_size = 15;
+  getTableList();
 };
 
 const onSelectionChange = (val: any[]) => {
@@ -119,6 +147,18 @@ const onSelectionChange = (val: any[]) => {
     opt.push(item.app_id);
   });
   selectionData.value = opt;
+};
+
+// 分页page-size
+const onSizeChange = (size: number) => {
+  queryFrom.page_size = size;
+  getTableList();
+};
+
+// 分页page-size
+const onCurrentChange = (current: number) => {
+  queryFrom.page_index = current;
+  getTableList();
 };
 
 const onClose = () => {

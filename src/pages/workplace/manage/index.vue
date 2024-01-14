@@ -8,7 +8,7 @@
         <div class="flex items-center h-50px">
           <el-form inline>
             <el-form-item class="mb-0 !mr-16px">
-              <el-input v-model="queryFrom.keyword" placeholder="应用名称/APP ID" clearable />
+              <el-input v-model="queryFrom.keyword" placeholder="应用名称" clearable />
             </el-form-item>
             <el-form-item class="mb-0 !mr-16px">
               <el-button type="primary" @click="getTableList">查询</el-button>
@@ -183,7 +183,8 @@ const getTableList = () => {
   appGet(queryFrom)
     .then((res: any) => {
       loadTable.value = false;
-      tableData.value = res;
+      tableData.value = res.list || [];
+      total.value = res.count || 0;
     })
     .catch(() => {
       loadTable.value = false;
