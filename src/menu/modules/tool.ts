@@ -9,7 +9,7 @@ const home: Menu.MenuOptions = {
     isHide: false,
     isKeepAlive: true,
     isLink: '',
-    index: 7,
+    index: 8,
     title: '工具'
   },
   children: [
@@ -25,6 +25,20 @@ const home: Menu.MenuOptions = {
         isKeepAlive: true,
         isLink: '',
         title: 'APP升级'
+      }
+    },
+    {
+      component: '/tool/command',
+      name: 'toolCommand',
+      path: '/tool/command',
+      meta: {
+        icon: 'i-bd-command',
+        isAffix: false,
+        isFull: false,
+        isHide: false,
+        isKeepAlive: true,
+        isLink: '',
+        title: '口令管理'
       }
     },
     {

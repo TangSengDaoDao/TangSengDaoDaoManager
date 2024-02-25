@@ -80,8 +80,8 @@ type ObjToKeyValArray<T> = {
 }[keyof T];
 declare namespace Column {
   interface ColumnOptions {
-    prop: string;
-    label: string;
+    prop?: string;
+    label?: string;
     type?: 'selection' | 'index' | 'expand';
     fixed?: true | 'left' | 'right';
     width?: string | number;

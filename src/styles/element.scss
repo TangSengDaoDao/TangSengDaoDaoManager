@@ -11,6 +11,7 @@
 
 /* 当前页面最大化 css */
 .main-maximize {
+
   .aside-split,
   .el-aside,
   .el-header,
@@ -40,6 +41,7 @@
     border-radius: 0;
     box-shadow: none;
   }
+
   .table-search {
     padding: 18px 0 0 !important;
     margin-bottom: 0 !important;
@@ -52,18 +54,22 @@
   flex-direction: column;
   align-items: center;
   height: 100%;
+
   .text {
     margin: 20px 0 30px;
     font-size: 23px;
     font-weight: bold;
     color: var(--el-text-color-regular);
   }
+
   .el-descriptions {
     width: 100%;
     padding: 40px 0 0;
+
     .el-descriptions__title {
       font-size: 18px;
     }
+
     .el-descriptions__label {
       width: 200px;
     }
@@ -75,6 +81,7 @@
   display: flex;
   width: 100%;
   height: 100%;
+
   .table-box {
     // 这里减去的是 treeFilter 组件宽度
     width: calc(100% - 230px);
@@ -94,8 +101,9 @@
   .table-search {
     padding: 18px 18px 0;
     margin-bottom: 10px;
+
     .el-form {
-      .el-form-item__content > * {
+      .el-form-item__content>* {
         width: 100%;
       }
 
@@ -104,6 +112,7 @@
         padding: 0 10px;
       }
     }
+
     .operation {
       display: flex;
       align-items: center;
@@ -117,9 +126,11 @@
     .header-button-lf {
       float: left;
     }
+
     .header-button-ri {
       float: right;
     }
+
     .el-button {
       margin-bottom: 15px;
     }
@@ -133,6 +144,7 @@
     table {
       width: 100%;
     }
+
     .el-table__header th {
       height: 45px;
       font-size: 15px;
@@ -140,16 +152,18 @@
       color: var(--el-text-color-primary);
       background: var(--el-fill-color-light);
     }
+
     .el-table__row {
       height: 45px;
       font-size: 14px;
+
       .el-table__placeholder {
         display: inline;
       }
     }
 
     // 设置 el-table 中 header 文字不换行，并省略
-    .el-table__header .el-table__cell > .cell {
+    .el-table__header .el-table__cell>.cell {
       white-space: nowrap;
     }
 
@@ -159,6 +173,7 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
+
       .table-empty {
         line-height: 30px;
       }
@@ -186,16 +201,19 @@
     height: 40px !important;
     font-size: 14px !important;
   }
+
   .el-table__row {
     height: 40px !important;
     font-size: 13px !important;
   }
 }
+
 .el-table--large {
   .el-table__header th {
     height: 50px !important;
     font-size: 16px !important;
   }
+
   .el-table__row {
     height: 50px !important;
     font-size: 15px !important;
@@ -208,12 +226,14 @@
     padding: 16px 20px;
     margin-bottom: 0;
     border-bottom: 1px solid var(--el-border-color-lighter);
+
     span {
       font-size: 17px;
       line-height: 17px;
       color: var(--el-text-color-primary) !important;
     }
   }
+
   .el-drawer__footer {
     border-top: 1px solid var(--el-border-color-lighter);
   }
@@ -227,8 +247,10 @@
   .drawer-multiColumn-form {
     display: flex;
     flex-wrap: wrap;
+
     .el-form-item {
       width: 47%;
+
       &:nth-child(2n-1) {
         margin-right: 5%;
       }
@@ -242,6 +264,7 @@
     padding: 15px 20px;
     margin: 0;
     border-bottom: 1px solid var(--el-border-color-lighter);
+
     .el-dialog__title {
       font-size: 17px;
     }
@@ -258,12 +281,47 @@
     background: var(--el-fill-color-light);
   }
 }
+
 /* el-menu-item */
 .el-menu-item {
   height: 48px !important;
   line-height: 48px !important;
 }
+
 /* bu-button*/
 .bu-button:focus-visible {
   outline: 0;
+}
+
+/* bd-tabs */
+.bd-tabs {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  .el-tabs__header {
+    margin: 0;
+  }
+
+  .el-tabs__nav-wrap {
+    padding: 0 24px;
+
+    &::after {
+      height: 1px;
+    }
+  }
+
+  .el-tabs__item {
+    padding: 0 12px;
+  }
+
+  .el-tabs__content {
+    flex: 1;
+    height: 100% !important;
+  }
+
+  .el-tab-pane {
+    flex: 1;
+    height: 100% !important;
+  }
 }

@@ -1,30 +1,28 @@
 <template>
-  <bd-page class="flex-col">
-    <!-- 布局 -->
+  <bd-page class="flex-col !p-0">
     <div class="flex-1 el-card border-none flex-col box-border overflow-hidden">
       <div class="h-50px pl-12px pr-12px box-border flex items-center justify-between bd-title">
-        <div class="bd-title-left">
-          <p class="m-0 font-600">
-            <el-text type="primary">{{ $route.query.name }}</el-text>
-            的黑名单
-          </p>
-        </div>
+        <div class="bd-title-left"></div>
         <div class="flex items-center h-50px">
           <el-form inline>
             <el-form-item class="mb-0 !mr-16px">
-              <el-input v-model="queryFrom.keyword" placeholder="好友昵称/uid" clearable />
+              <el-input v-model="queryFrom.keyword" placeholder="名称" clearable />
             </el-form-item>
             <el-form-item class="mb-0 !mr-0">
-              <el-button type="primary" @click="getTableList">查询</el-button>
+              <el-button type="primary">新增推荐应用</el-button>
             </el-form-item>
           </el-form>
         </div>
       </div>
+
       <div class="flex-1 overflow-hidden p-12px">
         <el-table v-loading="loadTable" :data="tableData" :border="true" style="width: 100%; height: 100%">
           <el-table-column type="index" :width="42" :align="'center'" :fixed="'left'">
             <template #header>
-              <i-bd-setting class="cursor-pointer" size="16" />
+              <i-bd-drag class="cursor-pointer" size="16" />
+            </template>
+            <template #default>
+              <i-bd-drag class="bd-drag cursor-pointer" size="16" />
             </template>
           </el-table-column>
           <el-table-column v-for="item in column" v-bind="item" :key="item.prop">
@@ -59,60 +57,52 @@
   </bd-page>
 </template>
 
-<route lang="yaml">
-meta:
-  title: 黑名单列表
-  isAffix: false
-</route>
-
-<script lang="tsx" setup>
-import { useRoute } from 'vue-router';
-import { ElAvatar } from 'element-plus';
+<script lang="tsx" name="Recommend" setup>
+import { ElButton, ElSpace, ElImage } from 'element-plus';
+import Sortable from 'sortablejs';
 import { BU_DOU_CONFIG } from '@/config';
-// API 接口
-import { userBlacklistGet } from '@/api/user';
-
-const route = useRoute();
 /**
  * 表格
  */
 const column = reactive<Column.ColumnOptions[]>([
   {
-    prop: 'name',
-    label: '好友昵称',
-    width: 140
-  },
-  {
-    prop: 'uid',
-    label: '好友ID',
-    width: 320
-  },
-  {
-    prop: 'avatar',
-    label: '好友头像',
+    prop: 'icon',
+    label: '应用LOGO',
     align: 'center',
     width: 100,
     render: (scope: any) => {
       let img_url = '';
-      if (scope.row['uid']) {
-        img_url = `${BU_DOU_CONFIG.APP_URL}users/${scope.row['uid']}/avatar`;
+      if (scope.row['icon']) {
+        img_url = `${BU_DOU_CONFIG.APP_URL}${scope.row.icon}`;
       }
-      return (
-        <ElAvatar src={img_url} size={54}>
-          {scope.row['name']}
-        </ElAvatar>
-      );
+      return <ElImage src={img_url} fit={'scale-down'} class={'w-60px h-60px'} />;
     }
   },
   {
-    prop: 'create_at',
-    label: '拉入黑名单时间',
-    width: 170
+    prop: 'name',
+    label: '应用名称',
+    width: 160
   },
   {
-    prop: 'remark',
-    label: '备注',
-    minWidth: 260
+    prop: 'app_id',
+    label: '应用APP ID',
+    width: 290
+  },
+  {
+    prop: 'description',
+    label: '描述'
+  },
+  {
+    prop: 'operation',
+    label: '操作',
+    align: 'center',
+    render: (_scope: any) => {
+      return (
+        <ElSpace>
+          <ElButton type="primary">配置</ElButton>
+        </ElSpace>
+      );
+    }
   }
 ]);
 const tableData = ref<any[]>([]);
@@ -123,19 +113,12 @@ const total = ref(0);
 // 查询
 const queryFrom = reactive({
   keyword: '',
-  uid: route.query.uid,
   page_size: 15,
   page_index: 1
 });
 
-const getTableList = () => {
-  loadTable.value = true;
-  userBlacklistGet(queryFrom).then((res: any) => {
-    loadTable.value = false;
-    tableData.value = res;
-    total.value = res.length;
-  });
-};
+// 搜索
+const getTableList = () => {};
 
 // 分页page-size
 const onSizeChange = (size: number) => {
@@ -149,9 +132,24 @@ const onCurrentChange = (current: number) => {
   getTableList();
 };
 
-// 初始化
+// 新增版本
+
+// table 拖拽排序
+const tableDrop = () => {
+  Sortable.create(document.querySelector('.el-table__body-wrapper tbody') as HTMLElement, {
+    // draggable: '.bd-drag',
+    animation: 300,
+    onEnd({ newIndex, oldIndex }: any) {
+      const tablesList = [...tableData.value];
+      const currRow = tablesList.splice(oldIndex as number, 1)[0];
+      tablesList.splice(newIndex as number, 0, currRow);
+      tableData.value = tablesList;
+    }
+  });
+};
+
 onMounted(() => {
-  getTableList();
+  tableDrop();
 });
 </script>
 

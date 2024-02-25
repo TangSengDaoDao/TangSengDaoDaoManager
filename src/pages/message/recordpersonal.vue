@@ -39,7 +39,7 @@
                 <slot :name="item.prop" :row="scope.row">{{ item.formatter(scope.row) }}</slot>
               </template>
               <template v-else>
-                <slot :name="item.prop" :row="scope.row">{{ scope.row[item.prop] }}</slot>
+                <slot :name="item.prop" :row="scope.row">{{ scope.row[item.prop!] }}</slot>
               </template>
             </template>
           </el-table-column>
@@ -198,8 +198,8 @@ const getUserList = () => {
   loadTable.value = true;
   messageRecordpersonalGet(queryFrom).then((res: any) => {
     loadTable.value = false;
-    tableData.value = res.list;
-    total.value = res.count;
+    tableData.value = res?.list ? res?.list : [];
+    total.value = res?.count ? res?.count : 0;
   });
 };
 
@@ -225,6 +225,7 @@ const msgDel = (data: any) => {
   const formData = {
     channel_id: route.query.uid,
     channel_type: 1,
+    from_uid: route.query.touid,
     list
   };
   messageDelete(formData).then((res: any) => {

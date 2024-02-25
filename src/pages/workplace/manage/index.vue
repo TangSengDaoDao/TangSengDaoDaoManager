@@ -1,22 +1,25 @@
 <template>
   <bd-page class="flex-col">
-    <!-- 布局 -->
     <div class="flex-1 el-card border-none flex-col box-border overflow-hidden">
       <div class="h-50px pl-12px pr-12px box-border flex items-center justify-between bd-title">
         <div class="bd-title-left">
-          <p class="m-0 font-600">封禁用户列表</p>
+          <p class="m-0 font-600">应用管理</p>
         </div>
         <div class="flex items-center h-50px">
           <el-form inline>
             <el-form-item class="mb-0 !mr-16px">
-              <el-input v-model="queryFrom.keyword" placeholder="uid/手机号/用户名" clearable />
+              <el-input v-model="queryFrom.keyword" placeholder="应用名称" clearable />
+            </el-form-item>
+            <el-form-item class="mb-0 !mr-16px">
+              <el-button type="primary" @click="getTableList">查询</el-button>
             </el-form-item>
             <el-form-item class="mb-0 !mr-0">
-              <el-button type="primary" @click="getUserList">查询</el-button>
+              <el-button type="primary" @click="onAppVersionAdd">新增应用</el-button>
             </el-form-item>
           </el-form>
         </div>
       </div>
+
       <div class="flex-1 overflow-hidden p-12px">
         <el-table v-loading="loadTable" :data="tableData" :border="true" style="width: 100%; height: 100%">
           <el-table-column type="index" :width="42" :align="'center'" :fixed="'left'">
@@ -53,91 +56,109 @@
         />
       </div>
     </div>
+    <!-- 应用 -->
+    <Apply v-model:value="applyAddValue" :type="applyType" :title="applyTitle" :data="applyData" @ok="onApplyClick" />
   </bd-page>
 </template>
 
 <route lang="yaml">
 meta:
-  title: 封禁用户列表
+  title: 应用管理
   isAffix: false
 </route>
 
 <script lang="tsx" setup>
-import { ElButton, ElSpace, ElAvatar, ElMessage, ElMessageBox } from 'element-plus';
+import { ElButton, ElMessageBox, ElMessage, ElSpace } from 'element-plus';
+import { Fancybox } from '@fancyapps/ui';
+import Apply from './components/Apply.vue';
 import { BU_DOU_CONFIG } from '@/config';
-// API 接口
-import { userDisablelistGet, userLiftbanPut } from '@/api/user';
+
+// API接口
+import { appGet, appDelete } from '@/api/workplace/app';
+/**
+ * 新增应用
+ */
+// 新增版本
+const applyAddValue = ref<boolean>(false);
+const applyTitle = ref('新增应用');
+const applyType = ref<'add' | 'edit'>('add');
+const onAppVersionAdd = () => {
+  applyAddValue.value = true;
+  applyTitle.value = '新增应用';
+  applyType.value = 'add';
+};
+
+// 确定应用
+const onApplyClick = () => {
+  getTableList();
+};
+
+const previewPicture = (url: string) => {
+  const imgList = [];
+  imgList.push({ src: url });
+  Fancybox.show(imgList, {
+    Toolbar: {
+      display: {
+        left: ['infobar'],
+        middle: ['zoomIn', 'zoomOut', 'toggle1to1', 'rotateCCW', 'rotateCW', 'flipX', 'flipY'],
+        right: ['slideshow', 'thumbs', 'close']
+      }
+    }
+  });
+};
+
 /**
  * 表格
  */
-const column = reactive([
+const column = reactive<Column.ColumnOptions[]>([
   {
-    prop: 'name',
-    label: '用户名',
-    fixed: 'left',
-    width: 140
-  },
-  {
-    prop: 'phone',
-    label: '手机号',
-    fixed: 'left',
-    width: 120
-  },
-  {
-    prop: 'avatar',
-    label: '头像',
+    prop: 'icon',
+    label: '应用LOGO',
     align: 'center',
-    width: 80,
+    width: 100,
     render: (scope: any) => {
       let img_url = '';
-      if (scope.row['uid']) {
-        img_url = `${BU_DOU_CONFIG.APP_URL}users/${scope.row['uid']}/avatar`;
+      if (scope.row['icon']) {
+        img_url = `${BU_DOU_CONFIG.APP_URL}${scope.row.icon}`;
       }
-      return (
-        <ElAvatar src={img_url} size={54}>
-          {scope.row['name']}
-        </ElAvatar>
-      );
+      return <img src={img_url} class={'w-60px h-60px cursor-pointer'} onClick={() => previewPicture(img_url)} />;
     }
   },
   {
-    prop: 'uid',
-    label: '用户ID',
-    minWidth: 300
+    prop: 'name',
+    label: '应用名称',
+    width: 160
   },
   {
-    prop: 'short_no',
-    label: '悟空号'
+    prop: 'app_id',
+    label: '应用APP ID',
+    width: 290
   },
   {
-    prop: 'sex',
-    label: '性别',
-    width: 60,
+    prop: 'status',
+    label: '应用状态',
+    width: 100,
     formatter(row: any) {
-      return row.sex === 1 ? '男' : '女';
+      return row.status === 1 ? '开启' : '关闭';
     }
   },
   {
-    prop: 'register_time',
-    label: '注册时间',
-    width: 170
-  },
-  {
-    prop: 'closure_time',
-    label: '封禁日期',
-    width: 150
+    prop: 'description',
+    label: '应用描述'
   },
   {
     prop: 'operation',
     label: '操作',
+    width: 150,
     align: 'center',
-    fixed: 'right',
-    width: 120,
     render: (scope: any) => {
       return (
         <ElSpace>
-          <ElButton type="primary" onClick={() => onUseLiftban(scope.row)}>
-            解禁
+          <ElButton type="primary" onClick={() => oApplyEidt(scope.row)}>
+            编辑
+          </ElButton>
+          <ElButton type="danger" onClick={() => onDelApply(scope.row)}>
+            删除
           </ElButton>
         </ElSpace>
       );
@@ -156,46 +177,44 @@ const queryFrom = reactive({
   page_index: 1
 });
 
-const getUserList = () => {
+// 搜索
+const getTableList = () => {
   loadTable.value = true;
-  userDisablelistGet(queryFrom).then((res: any) => {
-    loadTable.value = false;
-    tableData.value = res.list;
-    total.value = res.count;
-  });
+  appGet(queryFrom)
+    .then((res: any) => {
+      loadTable.value = false;
+      tableData.value = res.list || [];
+      total.value = res.count || 0;
+    })
+    .catch(() => {
+      loadTable.value = false;
+    });
 };
 
-// 分页page-size
-const onSizeChange = (size: number) => {
-  queryFrom.page_size = size;
-  getUserList();
+// 编辑
+const applyData = ref({});
+const oApplyEidt = (item: any) => {
+  applyTitle.value = `编辑${item.name}`;
+  applyData.value = item;
+  applyType.value = 'edit';
+  applyAddValue.value = true;
 };
 
-// 分页page-size
-const onCurrentChange = (current: number) => {
-  queryFrom.page_index = current;
-  getUserList();
-};
-
-// 解禁
-const onUseLiftban = (item: any) => {
-  ElMessageBox.confirm(`确定要解禁用户${item.name} 吗`, `解禁用户`, {
+// 删除应用
+const onDelApply = (item: any) => {
+  ElMessageBox.confirm(`确定要对该应用删除吗?`, `操作提示`, {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     closeOnClickModal: false,
     type: 'warning'
   })
     .then(() => {
-      const fromLiftban = {
-        uid: item.uid,
-        status: 1
-      };
-      userLiftbanPut(fromLiftban)
+      appDelete(item.app_id)
         .then((_res: any) => {
-          getUserList();
+          getTableList();
           ElMessage({
             type: 'success',
-            message: `解禁用户成功！`
+            message: `应用删除成功！`
           });
         })
         .catch(err => {
@@ -212,9 +231,20 @@ const onUseLiftban = (item: any) => {
     });
 };
 
-// 初始化
+// 分页page-size
+const onSizeChange = (size: number) => {
+  queryFrom.page_size = size;
+  getTableList();
+};
+
+// 分页page-size
+const onCurrentChange = (current: number) => {
+  queryFrom.page_index = current;
+  getTableList();
+};
+
 onMounted(() => {
-  getUserList();
+  getTableList();
 });
 </script>
 

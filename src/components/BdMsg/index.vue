@@ -5,13 +5,31 @@
       {{ msg['content'] }}
     </span>
     <!-- 图片 -->
-    <img v-else-if="msg.type == 2" class="w-120px" :src="`${url}${msg['url']}`" />
+    <img
+      v-else-if="msg.type == 2"
+      class="w-120px cursor-pointer"
+      :src="`${url}${msg['url']}`"
+      @click="previewPicture(`${url}${msg['url']}`, 'image')"
+    />
     <!-- GIF -->
-    <img v-else-if="msg.type == 3" class="w-120px" :src="`${url}${msg['url']}`" />
+    <img
+      v-else-if="msg.type == 3"
+      class="w-120px cursor-pointer"
+      :src="`${url}${msg['url']}`"
+      @click="previewPicture(`${url}${msg['url']}`, 'image')"
+    />
     <!-- 语音 -->
     <audio v-else-if="msg.type == 4" :src="`${url}${msg['url']}`"></audio>
     <!-- 视频 -->
-    <video v-else-if="msg.type == 5" controls :src="`${url}${msg['url']}`" class="w-220px h-100px"></video>
+    <video
+      v-else-if="msg.type == 5"
+      controls
+      controlsList="nofullscreen nodownload noplaybackrate noremote footbar"
+      disablePictureInPicture
+      :src="`${url}${msg['url']}`"
+      class="w-220px h-100px cursor-pointer"
+      @click="previewPicture(`${url}${msg['url']}`, 'image')"
+    ></video>
     <!-- 位置 -->
     <div v-else-if="msg.type == 6">
       <div>位置标题：{{ msg['title'] }}</div>
@@ -73,6 +91,7 @@
 </template>
 
 <script lang="tsx" name="BdMsg" setup>
+import { Fancybox } from '@fancyapps/ui';
 import '@lottiefiles/lottie-player/dist/tgs-player';
 import { BU_DOU_CONFIG } from '@/config';
 interface IProps {
@@ -80,4 +99,37 @@ interface IProps {
 }
 defineProps<IProps>();
 const url = BU_DOU_CONFIG.APP_URL;
+
+// 图片预览
+const previewPicture = (url: string, type: string) => {
+  const imgList = [];
+  imgList.push({ src: url, defaultType: type });
+  Fancybox.show(imgList, {
+    Toolbar: {
+      display: {
+        left: ['infobar'],
+        middle: ['zoomIn', 'zoomOut', 'toggle1to1', 'rotateCCW', 'rotateCW', 'flipX', 'flipY'],
+        right: ['slideshow', 'thumbs', 'close']
+      }
+    }
+  });
+};
 </script>
+
+<style scoped>
+video::-webkit-media-controls-timeline {
+  display: none;
+}
+video::-webkit-media-controls-mute-button {
+  display: none;
+}
+video::-webkit-media-controls-toggle-closed-captions-button {
+  display: none;
+}
+video::-webkit-media-controls-volume-slider {
+  display: none;
+}
+video::-webkit-media-controls-fullscreen-button {
+  display: none;
+}
+</style>

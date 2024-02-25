@@ -23,8 +23,8 @@
               <template v-else-if="item.formatter">
                 <slot :name="item.prop" :row="scope.row">{{ item.formatter(scope.row) }}</slot>
               </template>
-              <template v-else>
-                <slot :name="item.prop" :row="scope.row">{{ scope.row[item.prop] }}</slot>
+              <template v-else-if="item.prop">
+                <slot :name="item.prop" :row="scope.row">{{ scope.row[item.prop!] }}</slot>
               </template>
             </template>
           </el-table-column>
