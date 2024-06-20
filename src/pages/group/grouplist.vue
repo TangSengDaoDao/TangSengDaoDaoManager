@@ -227,8 +227,8 @@ const onSand = (item: any) => {
     receivederChannelType: 2,
     receiveder: item.group_no,
     receivederName: item.name,
-    sender: item.create_name,
-    senderName: item.creator
+    sender: item.creator,
+    senderName: item.create_name
   };
 };
 
