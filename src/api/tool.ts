@@ -17,12 +17,3 @@ export function commonAppversionPost(data: any) {
     data
   });
 }
-
-// 系统机器人菜单列表
-export function robotMenusGet(params: any) {
-  return request({
-    url: '/manager/robot/menus',
-    method: 'get',
-    params
-  });
-}

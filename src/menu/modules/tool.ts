@@ -26,34 +26,6 @@ const home: Menu.MenuOptions = {
         isLink: '',
         title: 'APP升级'
       }
-    },
-    {
-      component: '/tool/command',
-      name: 'toolCommand',
-      path: '/tool/command',
-      meta: {
-        icon: 'i-bd-command',
-        isAffix: false,
-        isFull: false,
-        isHide: false,
-        isKeepAlive: true,
-        isLink: '',
-        title: '口令管理'
-      }
-    },
-    {
-      component: '/tool/systemrobotmenu',
-      name: 'toolSystemrobotmenu',
-      path: '/tool/systemrobotmenu',
-      meta: {
-        icon: 'i-bd-application-two',
-        isAffix: false,
-        isFull: false,
-        isHide: true,
-        isKeepAlive: true,
-        isLink: '',
-        title: '系统机器人菜单列表'
-      }
     }
   ]
 };
