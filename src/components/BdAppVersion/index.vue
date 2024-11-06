@@ -15,6 +15,9 @@
         <el-radio-group v-model="formData.os">
           <el-radio label="android"> Android</el-radio>
           <el-radio label="ios">IOS</el-radio>
+          <el-radio label="mac">Mac</el-radio>
+          <el-radio label="windows">Windows</el-radio>
+          <el-radio label="linx">Linux</el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item label="升级操作">
@@ -34,10 +37,18 @@
             :on-success="onFileSuccess"
           >
             <template #trigger>
-              <el-button type="primary">点击上传APK</el-button>
+              <el-button type="primary">点击上传安装包</el-button>
             </template>
           </el-upload>
         </div>
+      </el-form-item>
+      <el-form-item label="SHA512">
+        <el-input
+          v-model="formData.signature"
+          type="textarea"
+          placeholder="请输入sha512"
+          :autosize="{ minRows: 4, maxRows: 6 }"
+        />
       </el-form-item>
       <el-form-item label="版本号">
         <el-input v-model="formData.app_version" placeholder="请输入版本号" />
@@ -96,7 +107,8 @@ const formData = reactive({
   os: 'android',
   is_force: 0,
   update_desc: '',
-  download_url: ''
+  download_url: '',
+  signature: ''
 });
 
 /**
@@ -115,7 +127,7 @@ const beforeUploadFile = async (rawFile: any) => {
 
   const res = (await feileGet(fileData)) as any;
   if (res.url) {
-    actionURL.value = res.url;
+    actionURL.value = `${res.url}&signature=1`;
     return true;
   } else {
     return false;
@@ -126,6 +138,7 @@ const beforeUploadFile = async (rawFile: any) => {
 const onFileSuccess = (response: any, _uploadFile: any) => {
   console.log(response);
   formData.download_url = response.path;
+  formData.signature = response.sha512;
 };
 
 // 取消
