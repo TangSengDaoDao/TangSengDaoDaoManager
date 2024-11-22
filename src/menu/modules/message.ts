@@ -10,7 +10,7 @@ const home: Menu.MenuOptions = {
     isKeepAlive: true,
     isLink: '',
     index: 4,
-    title: '消息'
+    title: '通知'
   },
   children: [
     {
@@ -24,7 +24,7 @@ const home: Menu.MenuOptions = {
         isHide: false,
         isKeepAlive: true,
         isLink: '',
-        title: '消息记录'
+        title: '通知记录'
       }
     },
     {

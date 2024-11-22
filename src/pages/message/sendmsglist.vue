@@ -57,7 +57,7 @@
 
 <route lang="yaml">
 meta:
-  title: 消息记录
+  title: 通知记录
   isAffix: false
 </route>
 
