@@ -131,14 +131,6 @@ const column = reactive<Column.ColumnOptions[]>([
     }
   },
   {
-    prop: 'is_encrypt',
-    label: '是否加密',
-    width: 86,
-    formatter(row: any) {
-      return row.is_encrypt === 1 ? '是' : '否';
-    }
-  },
-  {
     prop: 'revoke',
     label: '是否撤回',
     width: 120,
