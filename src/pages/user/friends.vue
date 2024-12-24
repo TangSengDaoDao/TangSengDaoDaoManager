@@ -15,6 +15,12 @@
             <el-form-item class="mb-0 !mr-16px">
               <el-input v-model="queryFrom.keyword" placeholder="uid/手机号/用户名" clearable />
             </el-form-item>
+            <el-form-item class="mb-0 !mr-16px">
+              <el-select v-model="queryFrom.sort_type" placeholder="请选择">
+                <el-option label="添加时间排序" :value="0" />
+                <el-option label="按消息顺序" :value="1" />
+              </el-select>
+            </el-form-item>
             <el-form-item class="mb-0 !mr-0">
               <el-button type="primary" @click="getUserList">查询</el-button>
             </el-form-item>
@@ -138,6 +144,7 @@ const total = ref(0);
 // 查询
 const queryFrom = reactive({
   keyword: '',
+  sort_type: 0,
   uid: route.query.uid,
   page_size: 15,
   page_index: 1

@@ -56,6 +56,8 @@
         />
       </div>
     </div>
+    <!-- 查看设备 -->
+    <Devices v-model:value="devicesValue" :uid="devicesUid" />
   </bd-page>
 </template>
 
@@ -69,6 +71,8 @@ meta:
 import { useRoute } from 'vue-router';
 import { ElButton, ElSpace, ElAvatar, ElMessage, ElMessageBox } from 'element-plus';
 import BdMsg from '@/components/BdMsg/index.vue';
+import Devices from './components/Devices.vue';
+
 import { BU_DOU_CONFIG } from '@/config';
 // API 接口
 import { messageRecordGet, messageDelete } from '@/api/message';
@@ -82,12 +86,12 @@ const column = reactive<Column.ColumnOptions[]>([
     prop: 'message_id',
     label: '消息编号',
     fixed: 'left',
-    width: 140
+    width: 200
   },
   {
     prop: 'sender_name',
     label: '发送者名字',
-    width: 120
+    width: 140
   },
   {
     prop: 'sender',
@@ -128,6 +132,21 @@ const column = reactive<Column.ColumnOptions[]>([
     }
   },
   {
+    prop: 'device_id',
+    label: '设备ID',
+    width: 160
+  },
+  {
+    prop: 'device_name',
+    label: '设备名称',
+    width: 200
+  },
+  {
+    prop: 'device_model',
+    label: '设备类型',
+    width: 120
+  },
+  {
     prop: 'revoke',
     label: '是否撤回',
     width: 120,
@@ -153,10 +172,13 @@ const column = reactive<Column.ColumnOptions[]>([
     label: '操作',
     align: 'center',
     fixed: 'right',
-    width: 100,
+    width: 190,
     render: (scope: any) => {
       return (
         <ElSpace>
+          <ElButton type="primary" onClick={() => onDevices(scope.row)}>
+            查看设备
+          </ElButton>
           {scope.row['is_deleted'] == 0 ? (
             <ElButton type="danger" onClick={() => onDel(scope.row)}>
               删除
@@ -243,6 +265,22 @@ const onDel = (item: any) => {
         message: '取消成功！'
       });
     });
+};
+
+// 查看设备
+const devicesValue = ref(false);
+const devicesUid = ref('');
+
+const onDevices = (item: any) => {
+  if (item.sender) {
+    devicesUid.value = item.sender;
+    devicesValue.value = true;
+  } else {
+    ElMessage({
+      type: 'warning',
+      message: '无用户，不能查看设备！'
+    });
+  }
 };
 
 // 初始化

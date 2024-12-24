@@ -17,8 +17,11 @@
             <el-form-item class="mb-0 !mr-16px">
               <el-input v-model="queryFrom.keyword" placeholder="发送者名字/消息内容" clearable />
             </el-form-item>
-            <el-form-item class="mb-0 !mr-0">
+            <el-form-item class="mb-0 !mr-16px">
               <el-button type="primary" @click="getUserList">查询</el-button>
+            </el-form-item>
+            <el-form-item class="mb-0 !mr-0">
+              <el-button type="primary" @click="onDevices">查看设备</el-button>
             </el-form-item>
           </el-form>
         </div>
@@ -59,6 +62,8 @@
         />
       </div>
     </div>
+    <!-- 查看设备 -->
+    <Devices v-model:value="devicesValue" :uid="devicesUid" />
   </bd-page>
 </template>
 
@@ -72,6 +77,8 @@ meta:
 import { useRoute } from 'vue-router';
 import { ElButton, ElSpace, ElAvatar, ElMessage, ElMessageBox } from 'element-plus';
 import BdMsg from '@/components/BdMsg/index.vue';
+import Devices from './components/Devices.vue';
+
 import { BU_DOU_CONFIG } from '@/config';
 // API 接口
 import { messageRecordpersonalGet, messageDelete } from '@/api/message';
@@ -85,12 +92,12 @@ const column = reactive<Column.ColumnOptions[]>([
     prop: 'message_id',
     label: '消息编号',
     fixed: 'left',
-    width: 140
+    width: 200
   },
   {
     prop: 'sender_name',
     label: '发送者名字',
-    width: 120
+    width: 140
   },
   {
     prop: 'sender',
@@ -129,6 +136,21 @@ const column = reactive<Column.ColumnOptions[]>([
         }
       }
     }
+  },
+  {
+    prop: 'device_id',
+    label: '设备ID',
+    width: 160
+  },
+  {
+    prop: 'device_name',
+    label: '设备名称',
+    width: 200
+  },
+  {
+    prop: 'device_model',
+    label: '设备类型',
+    width: 120
   },
   {
     prop: 'revoke',
@@ -248,6 +270,15 @@ const onDel = (item: any) => {
         message: '取消成功！'
       });
     });
+};
+
+// 查看设备
+const devicesValue = ref(false);
+const devicesUid = ref('');
+
+const onDevices = () => {
+  devicesUid.value = route.query.touid as string;
+  devicesValue.value = true;
 };
 
 // 初始化

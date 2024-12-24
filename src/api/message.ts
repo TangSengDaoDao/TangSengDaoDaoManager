@@ -78,3 +78,12 @@ export function messageRecordGet(params: any) {
     params
   });
 }
+
+// 查看设备
+export function messageUserDevices(params: any) {
+  return request({
+    url: '/manager/user/devices',
+    method: 'get',
+    params
+  });
+}
