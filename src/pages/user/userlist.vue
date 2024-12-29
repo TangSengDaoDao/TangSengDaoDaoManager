@@ -56,6 +56,8 @@
     </div>
     <!-- 发消息 -->
     <bd-send-msg v-model:value="sendValue" v-bind="sendInfo" />
+    <!-- 查看设备 -->
+    <Devices v-model:value="devicesValue" :uid="devicesUid" />
   </bd-page>
 </template>
 
@@ -68,6 +70,7 @@ meta:
 <script lang="tsx" setup>
 import { useRouter } from 'vue-router';
 import { ElButton, ElSpace, ElAvatar, ElDropdown, ElDropdownMenu, ElDropdownItem, ElMessage, ElMessageBox } from 'element-plus';
+import Devices from '@/pages/message/components/Devices.vue';
 import { useUserStore } from '@/stores/modules/user';
 import { BU_DOU_CONFIG } from '@/config';
 // API 接口
@@ -197,6 +200,10 @@ const column = reactive<Column.ColumnOptions[]>([
                       <i-bd-info class={'mr-4px'} />
                       {scope.row.status === 1 ? '封禁' : '解禁'}
                     </ElDropdownItem>
+                    <ElDropdownItem onClick={() => onDevices(scope.row)}>
+                      <i-bd-devices class={'mr-4px'} />
+                      查看设备
+                    </ElDropdownItem>
                   </ElDropdownMenu>
                 );
               }
@@ -316,6 +323,15 @@ const onUseLiftban = (item: any) => {
         message: '取消成功！'
       });
     });
+};
+
+// 查看设备
+const devicesValue = ref(false);
+const devicesUid = ref('');
+
+const onDevices = (item: any) => {
+  devicesUid.value = item.uid;
+  devicesValue.value = true;
 };
 
 // 初始化

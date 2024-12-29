@@ -62,8 +62,6 @@
         />
       </div>
     </div>
-    <!-- 查看设备 -->
-    <Devices v-model:value="devicesValue" :uid="devicesUid" />
   </bd-page>
 </template>
 
@@ -77,7 +75,6 @@ meta:
 import { useRoute } from 'vue-router';
 import { ElButton, ElSpace, ElAvatar, ElMessage, ElMessageBox } from 'element-plus';
 import BdMsg from '@/components/BdMsg/index.vue';
-import Devices from './components/Devices.vue';
 
 import { BU_DOU_CONFIG } from '@/config';
 // API 接口
@@ -270,15 +267,6 @@ const onDel = (item: any) => {
         message: '取消成功！'
       });
     });
-};
-
-// 查看设备
-const devicesValue = ref(false);
-const devicesUid = ref('');
-
-const onDevices = () => {
-  devicesUid.value = route.query.touid as string;
-  devicesValue.value = true;
 };
 
 // 初始化
