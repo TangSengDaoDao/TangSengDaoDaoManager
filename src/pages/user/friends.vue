@@ -1,7 +1,6 @@
 <template>
   <bd-page class="flex-col">
     <!-- 布局 -->
-
     <div class="flex-1 el-card border-none flex-col box-border overflow-hidden">
       <div class="h-50px pl-12px pr-12px box-border flex items-center justify-between bd-title">
         <div class="bd-title-left">
@@ -70,9 +69,10 @@
 meta:
   title: 好友列表
   isAffix: false
+  isKeepAlive: true
 </route>
 
-<script lang="tsx" setup>
+<script lang="tsx" name="UserFriends" setup>
 import { useRoute, useRouter } from 'vue-router';
 import { ElButton, ElSpace, ElAvatar } from 'element-plus';
 import { BU_DOU_CONFIG } from '@/config';

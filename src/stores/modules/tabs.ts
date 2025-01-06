@@ -3,6 +3,9 @@ import { defineStore } from 'pinia';
 import { TabsState, TabsMenuProps } from '@/stores/interface';
 import piniaPersistConfig from '@/utils/piniaPersist';
 
+import { useKeepAliveStore } from './keepAlive';
+const keepAliveStore = useKeepAliveStore();
+
 export const useTabsStore = defineStore({
   id: 'budou-tabs',
   state: (): TabsState => ({
@@ -13,6 +16,10 @@ export const useTabsStore = defineStore({
     async addTabs(tabItem: TabsMenuProps) {
       if (this.tabsMenuList.every(item => item.path !== tabItem.path)) {
         this.tabsMenuList.push(tabItem);
+      }
+
+      if (!keepAliveStore.keepAliveName.includes(tabItem.name) && tabItem.isKeepAlive) {
+        await keepAliveStore.addKeepAliveName(tabItem.path);
       }
     },
     // Remove Tabs
@@ -33,6 +40,9 @@ export const useTabsStore = defineStore({
       this.tabsMenuList = this.tabsMenuList.filter(item => {
         return item.path === tabsMenuValue || !item.close;
       });
+
+      const KeepAliveList = this.tabsMenuList.filter(item => item.isKeepAlive);
+      await keepAliveStore.setKeepAliveName(KeepAliveList.map(item => item.path));
     },
     // Set Tabs
     async setTabs(tabsMenuList: TabsMenuProps[]) {

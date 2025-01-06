@@ -101,10 +101,10 @@ watch(
       title: route.meta.title as string,
       path: route.fullPath,
       name: route.name as string,
-      close: !route.meta.isAffix
+      close: !route.meta.isAffix,
+      isKeepAlive: !!route.meta?.isKeepAlive
     };
     tabStore.addTabs(tabsParams);
-    route.meta.isKeepAlive && keepAliveStore.addKeepAliveName(route.name as string);
   },
   { immediate: true }
 );

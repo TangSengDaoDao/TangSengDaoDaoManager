@@ -36,6 +36,7 @@ export interface TabsMenuProps {
   path: string;
   name: string;
   close: boolean;
+  isKeepAlive: boolean;
 }
 
 /* TabsState */
