@@ -52,3 +52,29 @@ export function userLiftbanPut(params: any) {
     method: 'put'
   });
 }
+
+// 管理员-列表
+export function adminList() {
+  return request({
+    url: `manager/user/admin`,
+    method: 'get'
+  });
+}
+
+// 管理员-新增
+export function adminAdd(data: any) {
+  return request({
+    url: `manager/user/admin`,
+    method: 'post',
+    data
+  });
+}
+
+// 管理员-删除
+export function adminDelete(data: any) {
+  return request({
+    url: `manager/user/admin`,
+    method: 'delete',
+    data
+  });
+}

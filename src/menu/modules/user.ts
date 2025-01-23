@@ -32,7 +32,7 @@ const home: Menu.MenuOptions = {
       name: 'userUserlist',
       path: '/user/userlist',
       meta: {
-        icon: 'i-bd-every-user',
+        icon: 'i-bd-user',
         isAffix: false,
         isFull: false,
         isHide: false,
@@ -53,6 +53,20 @@ const home: Menu.MenuOptions = {
         isKeepAlive: true,
         isLink: '',
         title: '封禁用户列表'
+      }
+    },
+    {
+      component: '/user/administrator',
+      name: 'userAdministrator',
+      path: '/user/administrator',
+      meta: {
+        icon: 'i-bd-user-business',
+        isAffix: false,
+        isFull: false,
+        isHide: false,
+        isKeepAlive: true,
+        isLink: '',
+        title: '管理员'
       }
     }
   ]
