@@ -71,10 +71,10 @@ export function adminAdd(data: any) {
 }
 
 // 管理员-删除
-export function adminDelete(data: any) {
+export function adminDelete(params: any) {
   return request({
     url: `manager/user/admin`,
     method: 'delete',
-    data
+    params
   });
 }
