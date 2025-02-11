@@ -66,6 +66,7 @@ const home: Menu.MenuOptions = {
         isHide: false,
         isKeepAlive: true,
         isLink: '',
+        auth: ['superAdmin'],
         title: '管理员'
       }
     }

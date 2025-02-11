@@ -3,7 +3,7 @@
     <div class="flex items-center cursor-pointer">
       <span class="username">{{ username }}</span>
       <div class="avatar">
-        <img :src="headerUrl" alt="avatar" />
+        <img v-if="userStore.userInfo.uid" :src="headerUrl" alt="avatar" />
       </div>
     </div>
 

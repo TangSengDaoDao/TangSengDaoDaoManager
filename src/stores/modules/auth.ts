@@ -3,6 +3,26 @@ import { AuthState } from '@/stores/interface';
 import menu from '@/menu';
 import { getFlatMenuList, getShowMenuList, getAllBreadcrumbList } from '@/utils';
 
+import { useUserStore } from './user';
+
+/**
+ * 菜单权限处理
+ * @param menuList
+ */
+function getAuthMenu(menuList: Menu.MenuOptions[]) {
+  const newMenuList: Menu.MenuOptions[] = JSON.parse(JSON.stringify(menuList));
+  const userStore = useUserStore();
+  const role = userStore.userInfo?.role;
+
+  return newMenuList.filter(item => {
+    item.children?.length && (item.children = getAuthMenu(item.children));
+    if (item.meta?.auth && role) {
+      return item.meta?.auth.indexOf(role) !== -1;
+    }
+    return item;
+  });
+}
+
 export const useAuthStore = defineStore({
   id: 'budou-auth',
   state: (): AuthState => ({
@@ -32,7 +52,7 @@ export const useAuthStore = defineStore({
     },
     // Get AuthMenuList
     async getAuthMenuList() {
-      this.authMenuList = menu;
+      this.authMenuList = getAuthMenu(menu);
     },
 
     // Set RouteName

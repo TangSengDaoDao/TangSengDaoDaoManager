@@ -26,7 +26,7 @@ export interface GlobalState {
 /* UserState */
 export interface UserState {
   token: string;
-  userInfo: { name: string; uid: string };
+  userInfo: { name: string; uid: string; role?: Menu.IRole };
 }
 
 /* tabsMenuProps */

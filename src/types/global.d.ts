@@ -1,5 +1,6 @@
 /* Menu */
 declare namespace Menu {
+  type IRole = 'superAdmin' | 'admin';
   interface MenuOptions {
     path: string;
     name: string;
@@ -12,12 +13,13 @@ declare namespace Menu {
     icon: string;
     title: string;
     activeMenu?: string;
+    auth?: IRole[];
     isLink?: string;
     index?: number;
-    isHide: boolean;
-    isFull: boolean;
-    isAffix: boolean;
-    isKeepAlive: boolean;
+    isHide?: boolean;
+    isFull?: boolean;
+    isAffix?: boolean;
+    isKeepAlive?: boolean;
   }
 }
 
