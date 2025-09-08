@@ -1,0 +1,8 @@
+FROM nginx:latest
+
+COPY dist /usr/share/nginx/html
+COPY docker-entrypoint.sh /docker-entrypoint2.sh 
+COPY nginx.conf.template /
+
+ENTRYPOINT ["sh", "/docker-entrypoint2.sh"]
+CMD ["nginx","-g","daemon off;"]
