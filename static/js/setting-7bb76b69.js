@@ -1,0 +1,1 @@
+import{a as t}from"./axios-4fe91515.js";function n(o){return t({url:"/manager/user/updatepassword",method:"post",data:o})}function e(o){return t({url:"/manager/common/appconfig",method:"get",params:o})}function r(o){return t({url:"/manager/common/appconfig",method:"post",data:o})}export{r as a,e as g,n as u};

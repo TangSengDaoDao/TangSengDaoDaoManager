@@ -1,0 +1,1 @@
+import{_}from"./index-3da832da.js";import{i as n,a3 as t,at as o}from"./vue-cc42d2bc.js";const s={},c={class:"bd-page"};function a(e,r){return n(),t("div",c,[o(e.$slots,"default",{},void 0,!0)])}const p=_(s,[["render",a],["__scopeId","data-v-7220b583"]]);export{p as _};

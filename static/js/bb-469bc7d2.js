@@ -1,0 +1,1 @@
+import{e as _,i as t,a3 as a}from"./vue-cc42d2bc.js";import{b as e}from"./route-block-83d24a4e.js";import{_ as n}from"./index-3da832da.js";const s=_({name:"MyBb"}),o=_({...s,setup(c){return(p,r)=>(t(),a("div"))}});typeof e=="function"&&e(o);const m=n(o,[["__scopeId","data-v-a91003bd"]]);export{m as default};

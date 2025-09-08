@@ -1,0 +1,1 @@
+import{m as o}from"./mittBus-38f65179.js";import{e as n,i as e,a3 as s,j as a,a4 as r}from"./vue-cc42d2bc.js";const i={class:"theme-setting line-height-none cursor-pointer"},h=n({__name:"ThemeSetting",setup(m){const t=()=>{o.emit("openThemeDrawer")};return(c,p)=>(e(),s("div",i,[(e(),a(r("i-bd-page-template"),{theme:"outline",size:"20",onClick:t}))]))}});export{h as _};
